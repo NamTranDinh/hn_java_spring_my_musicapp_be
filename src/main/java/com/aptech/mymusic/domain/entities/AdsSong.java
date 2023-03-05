@@ -1,5 +1,7 @@
 package com.aptech.mymusic.domain.entities;
 
+import com.aptech.mymusic.utils.ResourceUtils;
+
 import javax.persistence.*;
 
 @Entity
@@ -69,5 +71,9 @@ public class AdsSong {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public String getImageUrl() {
+        return ResourceUtils.Path.ADS.getPath(image);
     }
 }

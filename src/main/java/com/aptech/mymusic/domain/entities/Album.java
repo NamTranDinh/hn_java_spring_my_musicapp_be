@@ -1,6 +1,6 @@
 package com.aptech.mymusic.domain.entities;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.aptech.mymusic.utils.ResourceUtils;
 
 import javax.persistence.*;
 
@@ -15,7 +15,6 @@ public class Album {
     @Column(name = "name")
     private String name;
     @Column(name = "singer_name")
-    @JsonProperty("singer_name")
     private String singerName;
     @Column(name = "img")
     private String image;
@@ -50,5 +49,9 @@ public class Album {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getImageUrl() {
+        return ResourceUtils.Path.ALBUMS.getPath(image);
     }
 }

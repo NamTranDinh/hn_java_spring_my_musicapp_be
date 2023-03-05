@@ -1,5 +1,7 @@
 package com.aptech.mymusic.domain.entities;
 
+import com.aptech.mymusic.utils.ResourceUtils;
+
 import javax.persistence.*;
 
 @Entity
@@ -38,4 +40,9 @@ public class Topic {
     public void setImage(String image) {
         this.image = image;
     }
+
+    public String getImageUrl() {
+        return ResourceUtils.Path.TOPIC.getPath(image);
+    }
+
 }

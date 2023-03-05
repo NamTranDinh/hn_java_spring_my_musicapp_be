@@ -1,6 +1,6 @@
 package com.aptech.mymusic.domain.entities;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.aptech.mymusic.utils.ResourceUtils;
 
 import javax.persistence.*;
 
@@ -16,10 +16,8 @@ public class Playlist {
     @Column(name = "name")
     private String name;
     @Column(name = "img_icon")
-    @JsonProperty("img_icon")
     private String imgIcon;
     @Column(name = "img_background")
-    @JsonProperty("img_background")
     private String imgBackground;
 
     public Long getId() {
@@ -52,5 +50,13 @@ public class Playlist {
 
     public void setImgBackground(String imgBackground) {
         this.imgBackground = imgBackground;
+    }
+
+    public String getImageIconUrl() {
+        return ResourceUtils.Path.PLAYLISTS.getPath(imgIcon);
+    }
+
+    public String getImageBackgroundUrl() {
+        return ResourceUtils.Path.PLAYLISTS.getPath(imgBackground);
     }
 }

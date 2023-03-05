@@ -1,6 +1,6 @@
 package com.aptech.mymusic.domain.entities;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.aptech.mymusic.utils.ResourceUtils;
 
 import javax.persistence.*;
 
@@ -13,20 +13,16 @@ public class Song {
     @Column(name = "id", nullable = false)
     private Long id;
     @Column(name = "album_ids")
-    @JsonProperty("album_ids")
     private String albumIds;
     @Column(name = "category_ids")
-    @JsonProperty("category_ids")
     private String categoryIds;
     @Column(name = "playlist_ids")
-    @JsonProperty("playlist_ids")
     private String playlistIds;
     @Column(name = "name")
     private String name;
     @Column(name = "img")
-    private String img;
+    private String image;
     @Column(name = "singer_name")
-    @JsonProperty("singer_name")
     private String singerName;
     @Column(name = "audio")
     private String audio;
@@ -75,12 +71,12 @@ public class Song {
         this.name = name;
     }
 
-    public String getImg() {
-        return img;
+    public String getImage() {
+        return image;
     }
 
-    public void setImg(String img) {
-        this.img = img;
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public String getSingerName() {
@@ -113,6 +109,14 @@ public class Song {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public String getImageUrl() {
+        return ResourceUtils.Path.SONGS.getPath(image);
+    }
+
+    public String getAudioUrl() {
+        return ResourceUtils.Path.AUDIO.getPath(audio);
     }
 
 }

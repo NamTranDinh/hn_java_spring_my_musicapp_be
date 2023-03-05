@@ -1,9 +1,8 @@
 package com.aptech.mymusic.domain.entities;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.aptech.mymusic.utils.ResourceUtils;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(name = "ma_category")
@@ -14,7 +13,6 @@ public class Category {
     @Column(name = "id", nullable = false)
     private Long id;
     @Column(name = "topic_ids")
-    @JsonProperty("topic_ids")
     private String topicIds;
     @Column(name = "name")
     private String name;
@@ -51,5 +49,9 @@ public class Category {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getImageUrl() {
+        return ResourceUtils.Path.ALBUMS.getPath(image);
     }
 }
