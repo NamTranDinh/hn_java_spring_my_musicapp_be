@@ -58,7 +58,7 @@ public class AdsSong {
     }
 
     public String getImage() {
-        return ResourceUtils.Path.ADS.getPath(image);
+        return image;
     }
 
     public void setImage(String image) {

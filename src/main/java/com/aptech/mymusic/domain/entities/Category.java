@@ -44,7 +44,7 @@ public class Category {
     }
 
     public String getImage() {
-        return ResourceUtils.Path.ALBUMS.getPath(image);
+        return image;
     }
 
     public void setImage(String image) {
@@ -52,6 +52,6 @@ public class Category {
     }
 
     public String getImageUrl() {
-        return ResourceUtils.Path.ALBUMS.getPath(image);
+        return ResourceUtils.Path.CATEGORIES.getPath(image);
     }
 }

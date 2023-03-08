@@ -44,7 +44,7 @@ public class Album {
     }
 
     public String getImage() {
-        return ResourceUtils.Path.ALBUMS.getPath(image);
+        return image;
     }
 
     public void setImage(String image) {
