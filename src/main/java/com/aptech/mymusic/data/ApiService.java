@@ -63,7 +63,7 @@ public class ApiService {
                 "FUNCTION('JSON_OVERLAPS', s.albumIds, :albumIds) = 1 OR " +
                 "FUNCTION('JSON_OVERLAPS', s.categoryIds, :categoryIds) = 1 OR " +
                 "FUNCTION('JSON_OVERLAPS', s.playlistIds, :playlistIds) = 1 " +
-                ")";
+                ") ORDER BY RAND()";
         return em.createQuery(query, Song.class)
                 .setParameter("listIds", listIds)
                 .setParameter("albumIds", song.getAlbumIds())
