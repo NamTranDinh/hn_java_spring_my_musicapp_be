@@ -2,11 +2,11 @@ package com.aptech.mymusic.api;
 
 import com.aptech.mymusic.data.ApiService;
 import com.aptech.mymusic.domain.entities.*;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.aptech.mymusic.utils.JsonHelper;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -87,15 +87,31 @@ public class ApiMusicController {
 
     @RequestMapping("/all_song_from/{type}/{id}")
     public List<Song> getAllSongFrom(@PathVariable String type, @PathVariable String id) {
-        if (!Arrays.asList("album", "category", "playlist").contains(type)) {
-            return null;
+        if (type == null || !Arrays.asList("album", "category", "playlist").contains(type.toLowerCase())) {
+            return Collections.emptyList();
         }
         return service.getAllSongFrom(type, id);
     }
 
-    @RequestMapping("/get_suggest_song/{id}/{listCurrentSongId}")
-    public List<Song> getSuggestSong(@PathVariable String id, @PathVariable String listCurrentSongId) {
-        return service.getRandData(Song.class, 10);
+    /**
+     * @param id             songID
+     * @param currentSongIds the blacklist song ids
+     * @param limit          limit
+     * @return list song if related
+     */
+    @PostMapping("/get_suggest_song")
+    public List<Song> getSuggestSong(@RequestParam(name = "id") Long id,
+                                     @RequestParam(name = "current_song_ids") String currentSongIds,
+                                     @RequestParam(name = "limit", required = false) Integer limit) {
+        if (id == null) return Collections.emptyList();
+
+        List<Long> listIds;
+        try {
+            listIds = JsonHelper.jsonToList(currentSongIds, Long.class);
+        } catch (Throwable t) {
+            listIds = Collections.emptyList();
+        }
+        return service.getSuggestSong(id, listIds, limit == null || limit < 0 ? 10 : limit);
     }
 
 }

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -48,6 +49,27 @@ public class ApiService {
         String query = "SELECT s FROM Song s WHERE s.status = 0 AND FUNCTION('JSON_CONTAINS', s." + type + "Ids, :id) = 1 ORDER BY s.id DESC";
         return em.createQuery(query, Song.class)
                 .setParameter("id", id)
+                .getResultList();
+    }
+
+    public List<Song> getSuggestSong(Long id, List<Long> listIds, int limit) {
+        Song song = getSongRepository().findById(id).orElse(null);
+        if (song == null) {
+            return Collections.emptyList();
+        }
+        String query = "SELECT DISTINCT s FROM Song s " + "WHERE " +
+                "s.id NOT IN :listIds AND " +
+                "s.status = 0 AND ( " +
+                "FUNCTION('JSON_OVERLAPS', s.albumIds, :albumIds) = 1 OR " +
+                "FUNCTION('JSON_OVERLAPS', s.categoryIds, :categoryIds) = 1 OR " +
+                "FUNCTION('JSON_OVERLAPS', s.playlistIds, :playlistIds) = 1 " +
+                ")";
+        return em.createQuery(query, Song.class)
+                .setParameter("listIds", listIds)
+                .setParameter("albumIds", song.getAlbumIds())
+                .setParameter("categoryIds", song.getCategoryIds())
+                .setParameter("playlistIds", song.getPlaylistIds())
+                .setMaxResults(limit)
                 .getResultList();
     }
 
