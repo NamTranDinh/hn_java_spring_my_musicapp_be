@@ -78,6 +78,7 @@ public class ApiService {
     }
 
     public List<Song> searchSongByName(String nameSong) {
+        nameSong = nameSong.toUpperCase();
         List<String> keySearches = Arrays.stream(nameSong.split(" "))
                 .filter(s1 -> s1 != null && !s1.trim().isEmpty())
                 .map(String::trim)
@@ -86,16 +87,15 @@ public class ApiService {
 
         List<String> tmp = new ArrayList<>();
         for (int i = 0; i < keySearches.size(); i++) {
-            tmp.add("s.name like :search_" + i);
+            tmp.add("upper(s.name) like upper(concat('%', :search_" + i + ", '%'))");
         }
         String conditions = String.join(" or ", tmp);
 
         String query = "SELECT DISTINCT s FROM Song s where s.status = 0 and (" + conditions + ")";
 
-
         TypedQuery<Song> q = em.createQuery(query, Song.class);
         for (int i = 0; i < keySearches.size(); i++) {
-            q.setParameter("search_" + i, "%" + keySearches.get(i) + "%");
+            q.setParameter("search_" + i, keySearches.get(i));
         }
 
         return q.setMaxResults(5)
