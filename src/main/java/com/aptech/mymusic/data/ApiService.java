@@ -7,8 +7,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -40,7 +44,7 @@ public class ApiService {
     }
 
     public List<Song> getNewlyReleasedMusic() {
-        return em.createQuery("SELECT s FROM Song s WHERE status = 0 ORDER BY s.id DESC", Song.class)
+        return em.createQuery("SELECT s FROM Song s WHERE s.status = 0 ORDER BY s.id DESC", Song.class)
                 .setMaxResults(10)
                 .getResultList();
     }
@@ -70,6 +74,31 @@ public class ApiService {
                 .setParameter("categoryIds", song.getCategoryIds())
                 .setParameter("playlistIds", song.getPlaylistIds())
                 .setMaxResults(limit)
+                .getResultList();
+    }
+
+    public List<Song> searchSongByName(String nameSong) {
+        List<String> keySearches = Arrays.stream(nameSong.split(" "))
+                .filter(s1 -> s1 != null && !s1.trim().isEmpty())
+                .map(String::trim)
+                .collect(Collectors.toList());
+        keySearches.add(nameSong);
+
+        List<String> tmp = new ArrayList<>();
+        for (int i = 0; i < keySearches.size(); i++) {
+            tmp.add("s.name like :search_" + i);
+        }
+        String conditions = String.join(" or ", tmp);
+
+        String query = "SELECT DISTINCT s FROM Song s where s.status = 0 and (" + conditions + ")";
+
+
+        TypedQuery<Song> q = em.createQuery(query, Song.class);
+        for (int i = 0; i < keySearches.size(); i++) {
+            q.setParameter("search_" + i, "%" + keySearches.get(i) + "%");
+        }
+
+        return q.setMaxResults(5)
                 .getResultList();
     }
 

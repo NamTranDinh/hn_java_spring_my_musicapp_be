@@ -114,4 +114,13 @@ public class ApiMusicController {
         return service.getSuggestSong(id, listIds, limit == null || limit < 0 ? 10 : limit);
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+    // SEARCH SONGS
+    ///////////////////////////////////////////////////////////////////////////
+
+    @RequestMapping("/search_song/{name}")
+    public List<Song> searchSongByName(@PathVariable(name = "name")  String nameSong) {
+        return service.searchSongByName(nameSong);
+    }
+
 }
