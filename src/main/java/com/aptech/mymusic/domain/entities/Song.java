@@ -116,7 +116,7 @@ public class Song {
     }
 
     public String getAudioUrl() {
-        return ResourceUtils.Path.AUDIO.getPath(audio);
+        return ResourceUtils.Path.getAudioPath(audio);
     }
 
 }

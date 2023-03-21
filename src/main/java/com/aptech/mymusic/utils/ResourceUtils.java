@@ -11,9 +11,9 @@ public class ResourceUtils {
         CATEGORIES("/images/music-app/categories"),
         PLAYLISTS("/images/music-app/playlists"),
         SONGS("/images/music-app/songs"),
-        TOPIC("/images/music-app/topic"),
-        AUDIO("/raw");
+        TOPIC("/images/music-app/topic");
 
+        private static final String AUDIO = "https://my-music-audio.000webhostapp.com/public/raw";
         private static String BASE_URL = null;
         private final String path;
 
@@ -26,6 +26,10 @@ public class ResourceUtils {
                 BASE_URL = UrlUtils.getBaseUrl();
             }
             return BASE_URL + path + "/" + name;
+        }
+
+        public static @NotNull String getAudioPath(String name) {
+            return AUDIO + "/" + name;
         }
 
     }
