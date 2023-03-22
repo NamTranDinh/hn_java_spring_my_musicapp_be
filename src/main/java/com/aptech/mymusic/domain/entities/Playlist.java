@@ -1,6 +1,6 @@
 package com.aptech.mymusic.domain.entities;
 
-import com.aptech.mymusic.utils.ResourceUtils;
+import com.aptech.mymusic.presentation.internalmodel.FirebasePath;
 
 import javax.persistence.*;
 
@@ -36,27 +36,27 @@ public class Playlist {
         this.name = name;
     }
 
-    public String getImgIcon() {
+    public String getImageIcon() {
         return imgIcon;
     }
 
-    public void setImgIcon(String imgIcon) {
+    public void setImageIcon(String imgIcon) {
         this.imgIcon = imgIcon;
     }
 
-    public String getImgBackground() {
+    public String getImageBackground() {
         return imgBackground;
     }
 
-    public void setImgBackground(String imgBackground) {
+    public void setImageBackground(String imgBackground) {
         this.imgBackground = imgBackground;
     }
 
     public String getImageIconUrl() {
-        return ResourceUtils.Path.PLAYLISTS.getPath(imgIcon);
+        return FirebasePath.PLAYLISTS.getUrl(imgIcon);
     }
 
     public String getImageBackgroundUrl() {
-        return ResourceUtils.Path.PLAYLISTS.getPath(imgBackground);
+        return FirebasePath.PLAYLISTS.getUrl(imgBackground);
     }
 }

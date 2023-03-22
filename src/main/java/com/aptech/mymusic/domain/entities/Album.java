@@ -1,6 +1,6 @@
 package com.aptech.mymusic.domain.entities;
 
-import com.aptech.mymusic.utils.ResourceUtils;
+import com.aptech.mymusic.presentation.internalmodel.FirebasePath;
 
 import javax.persistence.*;
 
@@ -52,6 +52,6 @@ public class Album {
     }
 
     public String getImageUrl() {
-        return ResourceUtils.Path.ALBUMS.getPath(image);
+        return FirebasePath.ALBUMS.getUrl(image);
     }
 }
