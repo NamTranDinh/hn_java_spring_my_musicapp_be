@@ -26,11 +26,14 @@ public class LocalStorageService extends StorageService {
     @Override
     public boolean uploadFile(@NotNull MultipartFile file, @NotNull Resource.Path path, String name) {
         try {
-            Files.write(file.getBytes(), fileOf(path, name));
-            return true;
-        } catch (IOException e) {
-            return false;
+            File to = fileOf(path, name);
+            if (to.getParentFile().exists() || to.getParentFile().mkdirs()) {
+                Files.write(file.getBytes(), fileOf(path, name));
+                return true;
+            }
+        } catch (IOException ignored) {
         }
+        return false;
     }
 
     @Override
@@ -52,7 +55,7 @@ public class LocalStorageService extends StorageService {
         if (getBaseUrl() == null) {
             return null;
         }
-        return BASE_URL + RESOURCE_STATIC_PATH.substring(1) + path.getPath() + name;
+        return BASE_URL + path.getPath() + name;
     }
 
     private static String BASE_URL;
@@ -67,7 +70,7 @@ public class LocalStorageService extends StorageService {
             String scheme = request.getScheme();
             String host = request.getServerName();
             int port = request.getServerPort();
-            BASE_URL = scheme + "://" + host + ":" + port;
+            BASE_URL = scheme + "://" + host + ":" + port + "/";
         }
         return BASE_URL;
     }

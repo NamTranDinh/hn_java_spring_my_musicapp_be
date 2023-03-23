@@ -56,15 +56,14 @@ public class ResourceController {
                 return ResponseEntity.internalServerError().body(Response.error(valid.getSecond()).body());
             }
             if (name != null) {
-                // delete file if exits
-                deleteFile(type, name);
+                name = name.substring(0, name.lastIndexOf("."));
             }
-            if (!isValidUUID(name = StringUtils.getFilename(name))) {
+            if (!isValidUUID(name)) {
                 name = UUID.randomUUID().toString();
             }
             // add the ext before upload
             String realName = name + "." + StringUtils.getFilenameExtension(file.getOriginalFilename());
-
+            System.out.println(realName);
             return storageService.uploadFile(file, path, realName)
                     ? ResponseEntity.ok().body(Response.ok().put("path", path.getPath()).put("name", realName).body())
                     : ResponseEntity.internalServerError().body(Response.error("Fail to upload file.").body());

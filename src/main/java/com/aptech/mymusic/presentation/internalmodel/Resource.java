@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class Resource {
 
-    public static final Type SYSTEM_RESOURCE_TYPE = Type.GCP;
+    public static final Type SYSTEM_RESOURCE_TYPE = Type.LOCAL;
 
     @Nullable
     public static String getUrl(Path path, String name) {

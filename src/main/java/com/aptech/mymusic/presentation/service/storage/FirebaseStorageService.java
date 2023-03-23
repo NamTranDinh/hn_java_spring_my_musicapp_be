@@ -27,12 +27,16 @@ public class FirebaseStorageService extends StorageService {
 
     @Override
     protected void init() {
-        FirebaseOptions options = FirebaseOptions.builder()
-                .setCredentials(getCredentials())
-                .setProjectId(PROJECT_ID)
-                .setStorageBucket(BUCKET_NAME)
-                .build();
-        FirebaseApp.initializeApp(options);
+        try {
+            FirebaseApp.getInstance(PROJECT_ID);
+        } catch (IllegalStateException e) {
+            FirebaseOptions options = FirebaseOptions.builder()
+                    .setCredentials(getCredentials())
+                    .setProjectId(PROJECT_ID)
+                    .setStorageBucket(BUCKET_NAME)
+                    .build();
+            FirebaseApp.initializeApp(options, PROJECT_ID);
+        }
     }
 
     @Override
