@@ -6,6 +6,7 @@ import com.aptech.mymusic.presentation.service.storage.StorageFactory;
 import com.aptech.mymusic.presentation.service.storage.StorageService;
 import com.google.firebase.database.utilities.Pair;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,6 +25,7 @@ public class ResourceController {
     public ResourceController() {
         this.storageService = StorageFactory.createStorageService(Resource.SYSTEM_RESOURCE_TYPE);
     }
+
     /**
      * Upload a file to firebase.
      *
@@ -53,14 +55,18 @@ public class ResourceController {
             if (valid.getFirst() == null || !valid.getFirst()) {
                 return ResponseEntity.internalServerError().body(Response.error(valid.getSecond()).body());
             }
-            if (!isValidUUID(name)) {
+            if (name != null) {
+                // delete file if exits
+                deleteFile(type, name);
+            }
+            if (!isValidUUID(name = StringUtils.getFilename(name))) {
                 name = UUID.randomUUID().toString();
             }
-            return storageService.uploadFile(file, path, name)
-                    ? ResponseEntity.ok().body(Response.ok()
-                    .put("path", path.getPath())
-                    .put("name", name)
-                    .body())
+            // add the ext before upload
+            String realName = name + "." + StringUtils.getFilenameExtension(file.getOriginalFilename());
+
+            return storageService.uploadFile(file, path, realName)
+                    ? ResponseEntity.ok().body(Response.ok().put("path", path.getPath()).put("name", realName).body())
                     : ResponseEntity.internalServerError().body(Response.error("Fail to upload file.").body());
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(Response.error(e.getMessage()).body());
@@ -88,13 +94,13 @@ public class ResourceController {
             Response response = Response.error(String.format("Type from 0 to %d", Resource.Path.values().length - 1));
             return ResponseEntity.badRequest().body(response.body());
         }
+        if (name == null) {
+            return ResponseEntity.badRequest().body(Response.error("Name is null!"));
+        }
         try {
             Resource.Path path = Resource.Path.values()[type];
             return storageService.deleteFile(path, name)
-                    ? ResponseEntity.ok().body(Response.ok()
-                    .put("path", path.getPath())
-                    .put("name", name)
-                    .body())
+                    ? ResponseEntity.ok().body(Response.ok().put("path", path.getPath()).put("name", name).body())
                     : ResponseEntity.internalServerError().body(Response.error("Fail to delete file.").body());
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(Response.error(e.getMessage()).body());
