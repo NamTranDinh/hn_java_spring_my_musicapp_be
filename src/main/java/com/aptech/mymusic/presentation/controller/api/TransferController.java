@@ -1,9 +1,10 @@
 package com.aptech.mymusic.presentation.controller.api;
 
 import com.aptech.mymusic.domain.entities.*;
-import com.aptech.mymusic.presentation.internalmodel.FirebasePath;
+import com.aptech.mymusic.presentation.internalmodel.Resource;
 import com.aptech.mymusic.presentation.service.ApiService;
-import com.aptech.mymusic.presentation.service.FirebaseStorageService;
+import com.aptech.mymusic.presentation.service.storage.FirebaseStorageService;
+import com.aptech.mymusic.presentation.service.storage.StorageFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 import org.springframework.data.repository.CrudRepository;
@@ -21,11 +22,11 @@ import java.util.regex.Pattern;
 @RequestMapping("/transfer")
 public class TransferController {
     private final ApiService service;
-    private final FirebaseStorageService firebaseStorageService;
+    private final FirebaseStorageService storageService;
 
-    public TransferController(ApiService service, FirebaseStorageService firebaseStorageService) {
+    public TransferController(ApiService service) {
         this.service = service;
-        this.firebaseStorageService = firebaseStorageService;
+        this.storageService = StorageFactory.createStorageService(FirebaseStorageService.class);
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -59,7 +60,7 @@ public class TransferController {
             }
             String name = isValidUUID(currentFileName) ? currentFileName : UUID.randomUUID().toString();
             File file = new File(DEFAULT_AUDIO_PATH, currentFileName);
-            boolean success = firebaseStorageService.uploadFile("audio/mpeg", file, FirebasePath.AUDIO, name);
+            boolean success = storageService.uploadFile("audio/mpeg", file, Resource.Path.AUDIO, name);
             System.out.println("Transfer audio --> " + song.getClass().getSimpleName() + " >>> " + success + " > " + name + " - " + currentFileName);
 
             if (success) {
@@ -82,6 +83,7 @@ public class TransferController {
         transferImages(service.getTopicRepository(), Topic.class);
     }
 
+    @SuppressWarnings("DuplicatedCode")
     private <S> void transferImages(@NotNull CrudRepository<S, ?> repository, Class<S> clazz) {
         repository.findAll().forEach(item -> {
             String currentFileName = getFileName(item);
@@ -90,7 +92,7 @@ public class TransferController {
             }
             String name = isValidUUID(currentFileName) ? currentFileName : UUID.randomUUID().toString();
             File file = new File(DEFAULT_IMAGE_PATH + getPath(clazz), currentFileName);
-            boolean success = firebaseStorageService.uploadFile("image/jpeg", file, getFilePath(item), name);
+            boolean success = storageService.uploadFile("image/jpeg", file, getFilePath(item), name);
             System.out.println("Transfer Image --> " + item.getClass().getSimpleName() + " >>> " + success + " > " + name + " - " + currentFileName);
 
             if (item instanceof Playlist) {
@@ -100,7 +102,7 @@ public class TransferController {
                 }
                 String name1 = isValidUUID(currentFileName1) ? currentFileName1 : UUID.randomUUID().toString();
                 File file1 = new File(DEFAULT_IMAGE_PATH + getPath(clazz), currentFileName1);
-                boolean success1 = firebaseStorageService.uploadFile("image/jpeg", file1, getFilePath(item), name1);
+                boolean success1 = storageService.uploadFile("image/jpeg", file1, getFilePath(item), name1);
                 System.out.println("Transfer Image --> " + item.getClass().getSimpleName() + " >>> " + success1 + " > " + name1 + " - " + currentFileName1);
                 if (success1) {
                     renameFile(DEFAULT_IMAGE_PATH + getPath(clazz), currentFileName1, name1 + ".jpg");
@@ -166,24 +168,24 @@ public class TransferController {
         }
     }
 
-    private FirebasePath getFilePath(Object o) {
+    private Resource.Path getFilePath(Object o) {
         if (o instanceof AdsSong) {
-            return FirebasePath.ADS;
+            return Resource.Path.ADS;
         }
         if (o instanceof Album) {
-            return FirebasePath.ALBUMS;
+            return Resource.Path.ALBUMS;
         }
         if (o instanceof Category) {
-            return FirebasePath.CATEGORIES;
+            return Resource.Path.CATEGORIES;
         }
         if (o instanceof Playlist) {
-            return FirebasePath.PLAYLISTS;
+            return Resource.Path.PLAYLISTS;
         }
         if (o instanceof Song) {
-            return FirebasePath.SONGS;
+            return Resource.Path.SONGS;
         }
         if (o instanceof Topic) {
-            return FirebasePath.TOPIC;
+            return Resource.Path.TOPICS;
         }
         return null;
     }

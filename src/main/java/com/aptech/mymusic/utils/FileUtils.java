@@ -1,8 +1,5 @@
-package com.aptech.mymusic.presentation.internalmodel;
+package com.aptech.mymusic.utils;
 
-import com.aptech.mymusic.config.FirebaseConfig;
-import com.aptech.mymusic.presentation.service.FirebaseStorageService;
-import com.google.cloud.storage.BlobId;
 import com.google.firebase.database.utilities.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.util.StringUtils;
@@ -13,58 +10,18 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
 
-public enum FirebasePath {
-
-    ADS("images/ads"),
-    ALBUMS("images/albums"),
-    CATEGORIES("images/categories"),
-    PLAYLISTS("images/playlists"),
-    SONGS("images/songs"),
-    TOPIC("images/topics"),
-    AUDIO("raw");
+public class FileUtils {
 
     private static final int MB = 1024 * 1024;
-    private static final int MAX_IMAGE_SIZE = 3 * MB;
-    private static final int MAX_AUDIO_SIZE = 10 * MB;
+    public static final int MAX_IMAGE_SIZE = 3 * MB;
+    public static final int MAX_AUDIO_SIZE = 10 * MB;
 
-    private final String path;
-
-    FirebasePath(String path) {
-        this.path = path;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public String getUrl(String name) {
-        return FirebaseStorageService.getUrl(this, name);
+    public static Pair<Boolean, String> validFile(boolean isImage, @NotNull MultipartFile file) {
+        return isImage ? validImage(file) : validAudio(file);
     }
 
     @NotNull
-    public BlobId blobOf(String name) {
-        return blobOf(this, name);
-    }
-
-    public Pair<Boolean, String> validFile(MultipartFile file) {
-        return validFile(this, file);
-    }
-
-    public boolean isImagePath() {
-        return !AUDIO.equals(this);
-    }
-
-    @NotNull
-    public static BlobId blobOf(@NotNull FirebasePath filePath, String fileName) {
-        return BlobId.of(FirebaseConfig.BUCKET_NAME, filePath.path + "/" + fileName);
-    }
-
-    public static Pair<Boolean, String> validFile(@NotNull FirebasePath path, @NotNull MultipartFile file) {
-        return path.isImagePath() ? validImage(file) : validAudio(file);
-    }
-
-    @NotNull
-    private static Pair<Boolean, String> validImage(@NotNull MultipartFile file) {
+    public static Pair<Boolean, String> validImage(@NotNull MultipartFile file) {
         // check ext
         String ext = StringUtils.getFilenameExtension(file.getOriginalFilename());
         if (ext == null) {
@@ -93,7 +50,7 @@ public enum FirebasePath {
     }
 
     @NotNull
-    private static Pair<Boolean, String> validAudio(@NotNull MultipartFile file) {
+    public static Pair<Boolean, String> validAudio(@NotNull MultipartFile file) {
         // check ext
         String ext = StringUtils.getFilenameExtension(file.getOriginalFilename());
         if (ext == null) {

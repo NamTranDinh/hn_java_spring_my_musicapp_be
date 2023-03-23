@@ -1,8 +1,9 @@
 package com.aptech.mymusic.presentation.controller.api;
 
-import com.aptech.mymusic.presentation.internalmodel.FirebasePath;
+import com.aptech.mymusic.presentation.internalmodel.Resource;
 import com.aptech.mymusic.presentation.internalmodel.Response;
-import com.aptech.mymusic.presentation.service.FirebaseStorageService;
+import com.aptech.mymusic.presentation.service.storage.StorageFactory;
+import com.aptech.mymusic.presentation.service.storage.StorageService;
 import com.google.firebase.database.utilities.Pair;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,37 +19,36 @@ import java.util.regex.Pattern;
 @RestController
 @RequestMapping("/resource")
 public class ResourceController {
-    private final FirebaseStorageService firebaseStorageService;
+    private final StorageService storageService;
 
-    public ResourceController(FirebaseStorageService firebaseStorageService) {
-        this.firebaseStorageService = firebaseStorageService;
+    public ResourceController() {
+        this.storageService = StorageFactory.createStorageService(Resource.SYSTEM_RESOURCE_TYPE);
     }
-
     /**
      * Upload a file to firebase.
      *
      * @param file a file part
-     * @param type type of Path {@link FirebasePath#ordinal() }
+     * @param type type of Path {@link Resource.Path#ordinal() }
      * @param name name expect of the file
      * @return success => 200
-     * @see FirebasePath#ADS
-     * @see FirebasePath#ALBUMS
-     * @see FirebasePath#CATEGORIES
-     * @see FirebasePath#PLAYLISTS
-     * @see FirebasePath#SONGS
-     * @see FirebasePath#TOPIC
-     * @see FirebasePath#AUDIO
+     * @see Resource.Path#ADS
+     * @see Resource.Path#ALBUMS
+     * @see Resource.Path#CATEGORIES
+     * @see Resource.Path#PLAYLISTS
+     * @see Resource.Path#SONGS
+     * @see Resource.Path#TOPICS
+     * @see Resource.Path#AUDIO
      */
     @PostMapping("/upload")
-    public ResponseEntity<?> uploadFile(@RequestParam(name = "data") MultipartFile file,
+    public ResponseEntity<?> uploadFile(@RequestParam(name = "file") MultipartFile file,
                                         @RequestParam(name = "type") int type,
                                         @RequestParam(name = "name", required = false) String name) {
-        if (type < 0 || type >= FirebasePath.values().length) {
-            Response response = Response.error(String.format("Type from 0 to %d", FirebasePath.values().length - 1));
+        if (type < 0 || type >= Resource.Path.values().length) {
+            Response response = Response.error(String.format("Type from 0 to %d", Resource.Path.values().length - 1));
             return ResponseEntity.badRequest().body(response.body());
         }
         try {
-            FirebasePath path = FirebasePath.values()[type];
+            Resource.Path path = Resource.Path.values()[type];
             Pair<Boolean, String> valid = path.validFile(file);
             if (valid.getFirst() == null || !valid.getFirst()) {
                 return ResponseEntity.internalServerError().body(Response.error(valid.getSecond()).body());
@@ -56,7 +56,7 @@ public class ResourceController {
             if (!isValidUUID(name)) {
                 name = UUID.randomUUID().toString();
             }
-            return firebaseStorageService.uploadFile(file, path, name)
+            return storageService.uploadFile(file, path, name)
                     ? ResponseEntity.ok().body(Response.ok()
                     .put("path", path.getPath())
                     .put("name", name)
@@ -70,27 +70,27 @@ public class ResourceController {
     /**
      * Delete a file from firebase.
      *
-     * @param type type of Path {@link FirebasePath#ordinal() }
+     * @param type type of Path {@link Resource.Path#ordinal() }
      * @param name name expect of the file
      * @return success => 200
-     * @see FirebasePath#ADS
-     * @see FirebasePath#ALBUMS
-     * @see FirebasePath#CATEGORIES
-     * @see FirebasePath#PLAYLISTS
-     * @see FirebasePath#SONGS
-     * @see FirebasePath#TOPIC
-     * @see FirebasePath#AUDIO
+     * @see Resource.Path#ADS
+     * @see Resource.Path#ALBUMS
+     * @see Resource.Path#CATEGORIES
+     * @see Resource.Path#PLAYLISTS
+     * @see Resource.Path#SONGS
+     * @see Resource.Path#TOPICS
+     * @see Resource.Path#AUDIO
      */
     @PostMapping("/delete")
     public ResponseEntity<?> deleteFile(@RequestParam(name = "type") int type,
                                         @RequestParam(name = "name") String name) {
-        if (type < 0 || type >= FirebasePath.values().length) {
-            Response response = Response.error(String.format("Type from 0 to %d", FirebasePath.values().length - 1));
+        if (type < 0 || type >= Resource.Path.values().length) {
+            Response response = Response.error(String.format("Type from 0 to %d", Resource.Path.values().length - 1));
             return ResponseEntity.badRequest().body(response.body());
         }
         try {
-            FirebasePath path = FirebasePath.values()[type];
-            return firebaseStorageService.deleteFile(path, name)
+            Resource.Path path = Resource.Path.values()[type];
+            return storageService.deleteFile(path, name)
                     ? ResponseEntity.ok().body(Response.ok()
                     .put("path", path.getPath())
                     .put("name", name)
