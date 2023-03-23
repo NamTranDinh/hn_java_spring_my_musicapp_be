@@ -8,6 +8,8 @@ import com.aptech.mymusic.presentation.service.storage.StorageFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -47,33 +49,36 @@ public class TransferController {
     // Transfer files
     ///////////////////////////////////////////////////////////////////////////
 
-    private static final String DEFAULT_IMAGE_PATH = "./src/main/resources/static/images/music-app";
+    private static final String DEFAULT_IMAGE_PATH = "./src/main/resources/static/images";
     private static final String DEFAULT_AUDIO_PATH = "./src/main/resources/static/raw";
 
-    // @PostMapping("/transfer_audio")
     @TestOnly
+    @PostMapping("/transfer_audio")
     public void transferAudio() {
+        System.out.println("-----> start audio");
         service.getSongRepository().findAll().forEach(song -> {
             String currentFileName = song.getAudio();
             if (currentFileName == null) {
                 return;
             }
-            String name = isValidUUID(currentFileName) ? currentFileName : UUID.randomUUID().toString();
+            String name = currentFileName.substring(0, currentFileName.lastIndexOf("."));
+            name = isValidUUID(name) ? name : UUID.randomUUID().toString();
+            name += "." + StringUtils.getFilenameExtension(currentFileName);
             File file = new File(DEFAULT_AUDIO_PATH, currentFileName);
             boolean success = storageService.uploadFile("audio/mpeg", file, Resource.Path.AUDIO, name);
             System.out.println("Transfer audio --> " + song.getClass().getSimpleName() + " >>> " + success + " > " + name + " - " + currentFileName);
 
             if (success) {
-                renameFile(DEFAULT_AUDIO_PATH, currentFileName, name + ".mp3");
+                renameFile(DEFAULT_AUDIO_PATH, currentFileName, name);
                 song.setAudio(name);
                 service.getSongRepository().save(song);
             }
         });
     }
 
-    // @PostMapping("/transfer_images")
 
     @TestOnly
+    @PostMapping("/transfer_images")
     public void transferAllImage() {
         transferImages(service.getAdsSongRepository(), AdsSong.class);
         transferImages(service.getAlbumRepository(), Album.class);
@@ -84,13 +89,16 @@ public class TransferController {
     }
 
     @SuppressWarnings("DuplicatedCode")
-    private <S> void transferImages(@NotNull CrudRepository<S, ?> repository, Class<S> clazz) {
+    private <S> void transferImages(@NotNull CrudRepository<S, ?> repository, @NotNull Class<S> clazz) {
+        System.out.println("-----> start " + clazz.getSimpleName());
         repository.findAll().forEach(item -> {
             String currentFileName = getFileName(item);
             if (currentFileName == null) {
                 return;
             }
-            String name = isValidUUID(currentFileName) ? currentFileName : UUID.randomUUID().toString();
+            String name = currentFileName.substring(0, currentFileName.lastIndexOf("."));
+            name = isValidUUID(name) ? name : UUID.randomUUID().toString();
+            name += "." + StringUtils.getFilenameExtension(currentFileName);
             File file = new File(DEFAULT_IMAGE_PATH + getPath(clazz), currentFileName);
             boolean success = storageService.uploadFile("image/jpeg", file, getFilePath(item), name);
             System.out.println("Transfer Image --> " + item.getClass().getSimpleName() + " >>> " + success + " > " + name + " - " + currentFileName);
@@ -100,18 +108,20 @@ public class TransferController {
                 if (currentFileName1 == null) {
                     return;
                 }
-                String name1 = isValidUUID(currentFileName1) ? currentFileName1 : UUID.randomUUID().toString();
+                String name1 = currentFileName1.substring(0, currentFileName1.lastIndexOf("."));
+                name1 = isValidUUID(name1) ? name1 : UUID.randomUUID().toString();
+                name1 += "." + StringUtils.getFilenameExtension(currentFileName1);
                 File file1 = new File(DEFAULT_IMAGE_PATH + getPath(clazz), currentFileName1);
                 boolean success1 = storageService.uploadFile("image/jpeg", file1, getFilePath(item), name1);
                 System.out.println("Transfer Image --> " + item.getClass().getSimpleName() + " >>> " + success1 + " > " + name1 + " - " + currentFileName1);
                 if (success1) {
-                    renameFile(DEFAULT_IMAGE_PATH + getPath(clazz), currentFileName1, name1 + ".jpg");
+                    renameFile(DEFAULT_IMAGE_PATH + getPath(clazz), currentFileName1, name1);
                     ((Playlist) item).setImageBackground(name1);
                 }
             }
 
             if (success) {
-                renameFile(DEFAULT_IMAGE_PATH + getPath(clazz), currentFileName, name + ".jpg");
+                renameFile(DEFAULT_IMAGE_PATH + getPath(clazz), currentFileName, name);
                 setFileName(item, name);
                 repository.save(item);
             }
