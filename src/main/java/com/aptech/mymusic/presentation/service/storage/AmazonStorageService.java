@@ -16,12 +16,12 @@ public class AmazonStorageService extends StorageService {
     }
 
     @Override
-    public boolean uploadFile(@NotNull MultipartFile file, Resource.@NotNull Path path, String name) {
+    public boolean uploadFile(@NotNull MultipartFile file, @NotNull Resource.Path path, String name) {
         return false;
     }
 
     @Override
-    public boolean deleteFile(Resource.@NotNull Path path, String name) {
+    public boolean deleteFile(@NotNull Resource.Path path, String name) {
         return false;
     }
 
