@@ -30,7 +30,9 @@ CREATE TABLE `ma_ads` (
   `content` varchar(300) DEFAULT NULL,
   `img` varchar(50) DEFAULT NULL,
   `status` tinyint(1) DEFAULT '0' COMMENT '0 is show, 1 is hidden',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `ma_ads_ma_song_id_fk` (`song_id`),
+  CONSTRAINT `ma_ads_ma_song_id_fk` FOREIGN KEY (`song_id`) REFERENCES `ma_song` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -97,6 +99,35 @@ INSERT INTO `ma_category` VALUES (1,'[3, 1]','Acoustic EDM','30f5ca1d-869e-4c68-
 UNLOCK TABLES;
 
 --
+-- Table structure for table `ma_permission`
+--
+
+DROP TABLE IF EXISTS `ma_permission`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `ma_permission` (
+  `id` int NOT NULL,
+  `title` varchar(100) DEFAULT NULL,
+  `description` varchar(100) DEFAULT NULL,
+  `slug` varchar(50) DEFAULT NULL,
+  `active` tinyint(1) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ma_permission`
+--
+
+LOCK TABLES `ma_permission` WRITE;
+/*!40000 ALTER TABLE `ma_permission` DISABLE KEYS */;
+INSERT INTO `ma_permission` VALUES (1,'Admin permission','Can access all link','/**',0,'2023-03-24 14:10:51',NULL);
+/*!40000 ALTER TABLE `ma_permission` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `ma_playlist`
 --
 
@@ -120,6 +151,62 @@ LOCK TABLES `ma_playlist` WRITE;
 /*!40000 ALTER TABLE `ma_playlist` DISABLE KEYS */;
 INSERT INTO `ma_playlist` VALUES (1,'Top 100 Nhạc Electronic/Dance Âu Mỹ Hay Nhất','2253f64c-35bd-456e-b61a-c44dc1aac45b.jpg','c4dc334c-8c7b-4810-b5ad-1390a0c9338d.jpg'),(2,'Top 100 Nhạc Hàn Quốc Hay Nhất','9c7cc15c-f02a-4898-bc0b-25d90f8d6e16.jpg','87ad5b2b-721e-48c4-b8fa-f8255d5194d8.jpg'),(3,'Top 100 Nhạc Phim Hàn Quốc Hay Nhất','fa59a63d-4e76-42b8-86d0-9391680ad56f.jpg','d0e6bc9a-8769-4840-9d5d-eb24d985554b.jpg'),(4,'Top 100 Nhạc Rap Việt Nam Hay Nhất','a5c6b12d-4332-4ff5-aea4-cb829f64848d.jpg','1fbba457-d0a0-4fa4-a786-a702424e85ec.jpg'),(5,'Top 100 Nhạc Trance/House/Techno Âu Mỹ Hay Nhất','ccaa2d06-2e9f-4962-bcca-d97b43e41a19.jpg','737aaa76-009d-4088-b785-c03442e6db1c.jpg'),(6,'Top 100 Pop Âu Mỹ Hay Nhất','43cbe0a0-a314-40bd-a112-cba22e0a38dc.jpg','dc4856b4-2141-4360-8c89-83c40a3983ff.jpg'),(7,'Top 100 Nhạc Blue/Jazz Âu Mỹ Hay Nhất','ede656a7-7a77-448f-a98d-8c2f8931e257.jpg','18c73f1e-b3de-4424-a9ac-ca57e17d5bc1.jpg'),(8,'Top 100 Bài Hát Nhạc Trẻ Hay Nhất','b86686bb-89f2-4860-b112-007e9f56ce94.jpg','0c2df499-fb7a-44dd-a64e-8cea4c701468.jpg'),(9,'Top 100 Nhạc EDM Việt Hay Nhất','b6cc82d2-1c8a-428b-81ae-a3dd99e13a87.jpg','a0545dad-56ac-4b72-b6c7-c36a4e61973d.jpg'),(10,'Top 100 Nhạc Hòa Tấu Nhạc Cụ Piano Hay Nhất','427fa1a9-c806-4025-8d21-84cee9f03ba3.jpg','2a73cc5c-643e-445f-9313-2c0b0ab1ca46.jpg');
 /*!40000 ALTER TABLE `ma_playlist` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `ma_role`
+--
+
+DROP TABLE IF EXISTS `ma_role`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `ma_role` (
+  `id` int NOT NULL,
+  `title` varchar(100) DEFAULT NULL,
+  `description` varchar(100) DEFAULT NULL,
+  `authority` varchar(50) DEFAULT NULL,
+  `active` tinyint(1) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ma_role_authority_unique` (`authority`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ma_role`
+--
+
+LOCK TABLES `ma_role` WRITE;
+/*!40000 ALTER TABLE `ma_role` DISABLE KEYS */;
+INSERT INTO `ma_role` VALUES (1,'Admin','Admin','Admin',0,'2023-03-24 14:11:53',NULL);
+/*!40000 ALTER TABLE `ma_role` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `ma_role_permission`
+--
+
+DROP TABLE IF EXISTS `ma_role_permission`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `ma_role_permission` (
+  `role_id` int NOT NULL,
+  `permission_id` int NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`role_id`,`permission_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ma_role_permission`
+--
+
+LOCK TABLES `ma_role_permission` WRITE;
+/*!40000 ALTER TABLE `ma_role_permission` DISABLE KEYS */;
+INSERT INTO `ma_role_permission` VALUES (1,1,'2023-03-24 14:12:05',NULL);
+/*!40000 ALTER TABLE `ma_role_permission` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -178,6 +265,43 @@ LOCK TABLES `ma_topic` WRITE;
 INSERT INTO `ma_topic` VALUES (1,'Acoustic','bed8a42b-cd93-4b4d-b348-fa6d315b3880.jpg'),(2,'R&B','ff53dd58-0513-47db-abbf-6480c36bc244.jpg'),(3,'Chill','f766f688-bfff-4142-a112-fa32137ff36d.jpg'),(4,'Ngủ ngon','2188e19b-69d0-4194-9274-8019cffee24d.jpg'),(5,'Giai điệu buồn','c601c6f5-0df6-4fb6-9251-1ae8fb545e21.jpg'),(6,'EDM','dc874257-3522-4a48-9c99-c0359922f1db.jpg'),(7,'Remix','b190d602-a5b2-483d-aca1-a28b9524e39f.jpg'),(8,'Party','d322d355-f5fa-4a69-b784-0239c02bc602.jpg');
 /*!40000 ALTER TABLE `ma_topic` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `ma_user`
+--
+
+DROP TABLE IF EXISTS `ma_user`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `ma_user` (
+  `id` int NOT NULL,
+  `role_id` int NOT NULL,
+  `firstname` varchar(50) DEFAULT NULL,
+  `lastname` varchar(50) DEFAULT NULL,
+  `gender` tinyint(1) DEFAULT NULL,
+  `avatar` varchar(50) DEFAULT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `email` varchar(100) DEFAULT NULL,
+  `username` varchar(50) DEFAULT NULL,
+  `password` varchar(60) DEFAULT NULL,
+  `status` tinyint(1) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `ma_user_ma_role_id_fk` (`role_id`),
+  CONSTRAINT `ma_user_ma_role_id_fk` FOREIGN KEY (`role_id`) REFERENCES `ma_role` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ma_user`
+--
+
+LOCK TABLES `ma_user` WRITE;
+/*!40000 ALTER TABLE `ma_user` DISABLE KEYS */;
+INSERT INTO `ma_user` VALUES (1,1,'Admin','MCT',1,NULL,NULL,'admin@gmail.com',NULL,'$2a$10$YNpfWneR8sW8BFpfLIy2F.80BS0BsBn/e9COtkjjRRTLiIyy9lKum',NULL,'2023-03-24 14:14:08',NULL);
+/*!40000 ALTER TABLE `ma_user` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -188,4 +312,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-03-24 11:42:04
+-- Dump completed on 2023-03-24 21:58:47

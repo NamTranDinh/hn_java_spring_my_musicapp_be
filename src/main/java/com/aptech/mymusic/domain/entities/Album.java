@@ -19,6 +19,9 @@ public class Album {
     @Column(name = "img")
     private String image;
 
+    public Album() {
+    }
+
     public Long getId() {
         return id;
     }

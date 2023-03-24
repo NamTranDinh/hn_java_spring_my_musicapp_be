@@ -29,7 +29,11 @@ public class Song {
     @Column(name = "likes")
     private Integer likes;
     @Column(name = "status")
-    private Integer status;
+    @Enumerated(EnumType.ORDINAL)
+    private Enums.Status status;
+
+    public Song() {
+    }
 
     public Long getId() {
         return id;
@@ -103,11 +107,11 @@ public class Song {
         this.likes = likes;
     }
 
-    public Integer getStatus() {
+    public Enums.Status getStatus() {
         return status;
     }
 
-    public void setStatus(Integer status) {
+    public void setStatus(Enums.Status status) {
         this.status = status;
     }
 

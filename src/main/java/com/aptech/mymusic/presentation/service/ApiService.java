@@ -1,5 +1,6 @@
 package com.aptech.mymusic.presentation.service;
 
+import com.aptech.mymusic.domain.entities.Enums;
 import com.aptech.mymusic.domain.entities.Song;
 import com.aptech.mymusic.domain.repository.*;
 import org.jetbrains.annotations.NotNull;
@@ -44,14 +45,16 @@ public class ApiService {
     }
 
     public List<Song> getNewlyReleasedMusic() {
-        return em.createQuery("SELECT s FROM Song s WHERE s.status = 0 ORDER BY s.id DESC", Song.class)
+        return em.createQuery("SELECT s FROM Song s WHERE s.status = :status ORDER BY s.id DESC", Song.class)
+                .setParameter("status", Enums.Status.ACTIVE.ordinal())
                 .setMaxResults(10)
                 .getResultList();
     }
 
     public List<Song> getAllSongFrom(String type, String id) {
-        String query = "SELECT s FROM Song s WHERE s.status = 0 AND FUNCTION('JSON_CONTAINS', s." + type + "Ids, :id) = 1 ORDER BY s.id DESC";
+        String query = "SELECT s FROM Song s WHERE s.status = :status AND FUNCTION('JSON_CONTAINS', s." + type + "Ids, :id) = 1 ORDER BY s.id DESC";
         return em.createQuery(query, Song.class)
+                .setParameter("status", Enums.Status.ACTIVE.ordinal())
                 .setParameter("id", id)
                 .getResultList();
     }
@@ -63,13 +66,14 @@ public class ApiService {
         }
         String query = "SELECT DISTINCT s FROM Song s " + "WHERE " +
                 "s.id NOT IN :listIds AND " +
-                "s.status = 0 AND ( " +
+                "s.status = :status AND ( " +
                 "FUNCTION('JSON_OVERLAPS', s.albumIds, :albumIds) = 1 OR " +
                 "FUNCTION('JSON_OVERLAPS', s.categoryIds, :categoryIds) = 1 OR " +
                 "FUNCTION('JSON_OVERLAPS', s.playlistIds, :playlistIds) = 1 " +
                 ") ORDER BY RAND()";
         return em.createQuery(query, Song.class)
                 .setParameter("listIds", listIds)
+                .setParameter("status", Enums.Status.ACTIVE.ordinal())
                 .setParameter("albumIds", song.getAlbumIds())
                 .setParameter("categoryIds", song.getCategoryIds())
                 .setParameter("playlistIds", song.getPlaylistIds())
@@ -91,14 +95,15 @@ public class ApiService {
         }
         String conditions = String.join(" or ", tmp);
 
-        String query = "SELECT DISTINCT s FROM Song s where s.status = 0 and (" + conditions + ")";
+        String query = "SELECT DISTINCT s FROM Song s where s.status = :status and (" + conditions + ")";
 
         TypedQuery<Song> q = em.createQuery(query, Song.class);
         for (int i = 0; i < keySearches.size(); i++) {
             q.setParameter("search_" + i, keySearches.get(i));
         }
 
-        return q.setMaxResults(5)
+        return q.setParameter("status", Enums.Status.ACTIVE.ordinal())
+                .setMaxResults(5)
                 .getResultList();
     }
 

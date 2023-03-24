@@ -17,6 +17,9 @@ public class Topic {
     @Column(name = "img")
     private String image;
 
+    public Topic() {
+    }
+
     public Long getId() {
         return id;
     }

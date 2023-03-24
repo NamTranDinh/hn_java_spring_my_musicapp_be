@@ -20,6 +20,9 @@ public class Playlist {
     @Column(name = "img_background")
     private String imgBackground;
 
+    public Playlist() {
+    }
+
     public Long getId() {
         return id;
     }

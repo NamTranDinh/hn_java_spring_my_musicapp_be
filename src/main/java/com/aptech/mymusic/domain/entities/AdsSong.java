@@ -20,17 +20,10 @@ public class AdsSong {
     @Column(name = "img")
     private String image;
     @Column(name = "status")
-    private Integer status;
+    @Enumerated(EnumType.ORDINAL)
+    private Enums.Status status;
 
     public AdsSong() {
-    }
-
-    public AdsSong(Long id, Song song, String content, String image, Integer status) {
-        this.id = id;
-        this.song = song;
-        this.content = content;
-        this.image = image;
-        this.status = status;
     }
 
     public Long getId() {
@@ -65,11 +58,11 @@ public class AdsSong {
         this.image = image;
     }
 
-    public Integer getStatus() {
+    public Enums.Status getStatus() {
         return status;
     }
 
-    public void setStatus(Integer status) {
+    public void setStatus(Enums.Status status) {
         this.status = status;
     }
 

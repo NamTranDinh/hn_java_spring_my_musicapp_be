@@ -1,6 +1,7 @@
 package com.aptech.mymusic.presentation.controller.api;
 
 import com.aptech.mymusic.domain.entities.*;
+import com.aptech.mymusic.domain.entities.Enums.Status;
 import com.aptech.mymusic.presentation.service.ApiService;
 import com.aptech.mymusic.utils.JsonHelper;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +25,7 @@ public class ApiMusicController {
     public List<AdsSong> getDataBanner() {
         return service.getAdsSongRepository().findAll()
                 .stream()
-                .filter(adsSong -> adsSong.getSong().getStatus() == 0 && adsSong.getStatus() == 0)
+                .filter(adsSong -> adsSong.getSong().getStatus() == Status.ACTIVE && adsSong.getStatus() == Status.ACTIVE)
                 .collect(Collectors.toList());
     }
 

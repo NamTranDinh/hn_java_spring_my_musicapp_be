@@ -19,6 +19,9 @@ public class Category {
     @Column(name = "img")
     private String image;
 
+    public Category() {
+    }
+
     public Long getId() {
         return id;
     }
