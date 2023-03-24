@@ -1,5 +1,6 @@
 package com.aptech.mymusic.presentation.controller.api;
 
+import com.aptech.mymusic.config.ResourceConfig;
 import com.aptech.mymusic.presentation.internalmodel.Resource;
 import com.aptech.mymusic.presentation.internalmodel.Response;
 import com.aptech.mymusic.presentation.service.storage.StorageFactory;
@@ -23,7 +24,7 @@ public class ResourceController {
     private final StorageService storageService;
 
     public ResourceController() {
-        this.storageService = StorageFactory.createStorageService(Resource.SYSTEM_RESOURCE_TYPE);
+        this.storageService = StorageFactory.createStorageService(ResourceConfig.SYSTEM_RESOURCE_TYPE);
     }
 
     /**

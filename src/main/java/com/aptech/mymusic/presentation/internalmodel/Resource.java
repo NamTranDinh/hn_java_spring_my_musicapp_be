@@ -1,5 +1,6 @@
 package com.aptech.mymusic.presentation.internalmodel;
 
+import com.aptech.mymusic.config.ResourceConfig;
 import com.aptech.mymusic.presentation.service.storage.AmazonStorageService;
 import com.aptech.mymusic.presentation.service.storage.FirebaseStorageService;
 import com.aptech.mymusic.presentation.service.storage.LocalStorageService;
@@ -10,11 +11,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class Resource {
 
-    public static final Type SYSTEM_RESOURCE_TYPE = Type.LOCAL;
-
     @Nullable
     public static String getUrl(Path path, String name) {
-        switch (SYSTEM_RESOURCE_TYPE) {
+        switch (ResourceConfig.SYSTEM_RESOURCE_TYPE) {
             case AWS3:
                 return AmazonStorageService.getUrl(path, name);
             case GCP:
