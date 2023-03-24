@@ -18,11 +18,31 @@ import java.io.File;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-@SuppressWarnings("unused")
+/**
+ * A class help push resource from local to firebase storage
+ */
 @TestOnly
 @RestController
 @RequestMapping("/transfer")
 public class TransferController {
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Enable rule
+    ///////////////////////////////////////////////////////////////////////////
+
+    private static final boolean ENABLE = false;
+
+    private static void requireEnable() {
+        if (ENABLE) {
+            return;
+        }
+        throw new RuntimeException("You must set ENABLE var to true to use this class!");
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Start class
+    ///////////////////////////////////////////////////////////////////////////
+
     private final ApiService service;
     private final FirebaseStorageService storageService;
 
@@ -38,6 +58,8 @@ public class TransferController {
     @RequestMapping("/test_url")
     @TestOnly
     public void testUrl() {
+        requireEnable();
+
         System.out.println("Start");
         service.getSongRepository().findById(1L).ifPresent(song -> {
             System.out.println("Image -> " + song.getImageUrl());
@@ -55,6 +77,8 @@ public class TransferController {
     @TestOnly
     @PostMapping("/transfer_audio")
     public void transferAudio() {
+        requireEnable();
+
         System.out.println("-----> start audio");
         service.getSongRepository().findAll().forEach(song -> {
             String currentFileName = song.getAudio();
@@ -80,6 +104,8 @@ public class TransferController {
     @TestOnly
     @PostMapping("/transfer_images")
     public void transferAllImage() {
+        requireEnable();
+
         transferImages(service.getAdsSongRepository(), AdsSong.class);
         transferImages(service.getAlbumRepository(), Album.class);
         transferImages(service.getCategoryRepository(), Category.class);
