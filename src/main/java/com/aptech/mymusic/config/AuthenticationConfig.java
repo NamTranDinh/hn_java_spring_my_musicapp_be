@@ -53,6 +53,25 @@ public class AuthenticationConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(@NotNull HttpSecurity http) throws Exception {
 
+        http.authorizeRequests()
+                .antMatchers("/raw/**", "/images/**", "/public/**", "/api/**")
+                .permitAll();
+        grantPermission(http).authorizeRequests()
+                .anyRequest().authenticated()
+                .and()
+                .formLogin((frm) -> frm
+                        .loginPage("/auth/login")
+                        .successForwardUrl("/auth/redirect")
+                        .usernameParameter("username")
+                        .passwordParameter("password")
+                        .permitAll())
+                .logout((logout) -> logout.clearAuthentication(true).permitAll())
+                .csrf().disable();
+
+        return http.build();
+    }
+
+    private HttpSecurity grantPermission(HttpSecurity http) throws Exception {
         List<Role> roles = roleRepository.findAll();
 
         for (Role role : roles) {
@@ -71,21 +90,7 @@ public class AuthenticationConfig {
                     .antMatchers(authorities)
                     .hasAuthority(role.getAuthority());
         }
-
-        http.authorizeRequests()
-                .antMatchers("/resource/**", "/api/**").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .formLogin((frm) -> frm
-                        .loginPage("/auth/login")
-                        .successForwardUrl("/auth/redirect")
-                        .usernameParameter("username")
-                        .passwordParameter("password")
-                        .permitAll())
-                .logout((logout) -> logout.clearAuthentication(true).permitAll())
-                .csrf().disable();
-
-        return http.build();
+        return http;
     }
 
 }

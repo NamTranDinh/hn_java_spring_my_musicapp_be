@@ -5,11 +5,8 @@ import com.aptech.mymusic.presentation.internalmodel.Resource;
 import com.google.common.io.Files;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 
@@ -46,27 +43,10 @@ public class LocalStorageService extends StorageService {
 
     @Nullable
     public static String getUrl(@NotNull Resource.Path path, String name) {
-        if (getBaseUrl() == null) {
+        if (Resource.getBaseUrl() == null) {
             return null;
         }
-        return BASE_URL + ResourceConfig.getInstance().getLocalResourceSuffix() + path.getPath() + name;
-    }
-
-    private static String BASE_URL;
-
-    private static String getBaseUrl() {
-        if (BASE_URL != null) {
-            return BASE_URL;
-        }
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if (attributes != null) {
-            HttpServletRequest request = attributes.getRequest();
-            String scheme = request.getScheme();
-            String host = request.getServerName();
-            int port = request.getServerPort();
-            BASE_URL = scheme + "://" + host + ":" + port + "/";
-        }
-        return BASE_URL;
+        return Resource.getBaseUrl() + ResourceConfig.getInstance().getLocalResourceSuffix() + path.getPath() + name;
     }
 
     @NotNull
