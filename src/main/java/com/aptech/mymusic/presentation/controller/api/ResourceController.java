@@ -28,7 +28,7 @@ public class ResourceController {
     }
 
     /**
-     * Upload a file to firebase.
+     * Upload a file. Depend on {@link ResourceConfig#SYSTEM_RESOURCE_TYPE}
      *
      * @param file a file part
      * @param type type of Path {@link Resource.Path#ordinal() }
@@ -64,7 +64,6 @@ public class ResourceController {
             }
             // add the ext before upload
             String realName = name + "." + StringUtils.getFilenameExtension(file.getOriginalFilename());
-            System.out.println(realName);
             return storageService.uploadFile(file, path, realName)
                     ? ResponseEntity.ok().body(Response.ok().put("path", path.getPath()).put("name", realName).body())
                     : ResponseEntity.internalServerError().body(Response.error("Fail to upload file.").body());
@@ -74,7 +73,7 @@ public class ResourceController {
     }
 
     /**
-     * Delete a file from firebase.
+     * Delete a file. Depend on {@link ResourceConfig#SYSTEM_RESOURCE_TYPE}
      *
      * @param type type of Path {@link Resource.Path#ordinal() }
      * @param name name expect of the file
