@@ -6,14 +6,18 @@ import com.aptech.mymusic.presentation.service.storage.FirebaseStorageService;
 import com.aptech.mymusic.presentation.service.storage.LocalStorageService;
 import com.aptech.mymusic.utils.FileUtils;
 import com.google.firebase.database.utilities.Pair;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.web.multipart.MultipartFile;
 
 public class Resource {
+    public static String getUrl(Path path, String name) {
+        return getUrl(ResourceConfig.getInstance().getSystemResourceType(), path, name);
+    }
 
     @Nullable
-    public static String getUrl(Path path, String name) {
-        switch (ResourceConfig.SYSTEM_RESOURCE_TYPE) {
+    public static String getUrl(@NotNull Type type, Path path, String name) {
+        switch (type) {
             case AWS3:
                 return AmazonStorageService.getUrl(path, name);
             case GCP:

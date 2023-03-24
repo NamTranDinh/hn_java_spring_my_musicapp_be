@@ -24,11 +24,11 @@ public class ResourceController {
     private final StorageService storageService;
 
     public ResourceController() {
-        this.storageService = StorageFactory.createStorageService(ResourceConfig.SYSTEM_RESOURCE_TYPE);
+        this.storageService = StorageFactory.createStorageService();
     }
 
     /**
-     * Upload a file. Depend on {@link ResourceConfig#SYSTEM_RESOURCE_TYPE}
+     * Upload a file. Depend on {@link ResourceConfig#getSystemResourceType()}
      *
      * @param file a file part
      * @param type type of Path {@link Resource.Path#ordinal() }
@@ -50,33 +50,29 @@ public class ResourceController {
             Response response = Response.error(String.format("Type from 0 to %d", Resource.Path.values().length - 1));
             return ResponseEntity.badRequest().body(response.body());
         }
-        try {
-            Resource.Path path = Resource.Path.values()[type];
-            Pair<Boolean, String> valid = path.validFile(file);
-            if (valid.getFirst() == null || !valid.getFirst()) {
-                return ResponseEntity.internalServerError().body(Response.error(valid.getSecond()).body());
-            }
-            if (name != null) {
-                name = name.substring(0, name.lastIndexOf("."));
-            }
-            if (!isValidUUID(name)) {
-                name = UUID.randomUUID().toString();
-            }
-            // add the ext before upload
-            String realName = name + "." + StringUtils.getFilenameExtension(file.getOriginalFilename());
-            return storageService.uploadFile(file, path, realName)
-                    ? ResponseEntity.ok().body(Response.ok().put("path", path.getPath()).put("name", realName).body())
-                    : ResponseEntity.internalServerError().body(Response.error("Fail to upload file.").body());
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(Response.error(e.getMessage()).body());
+        Resource.Path path = Resource.Path.values()[type];
+        Pair<Boolean, String> valid = path.validFile(file);
+        if (valid.getFirst() == null || !valid.getFirst()) {
+            return ResponseEntity.internalServerError().body(Response.error(valid.getSecond()).body());
         }
+        if (name != null) {
+            name = name.substring(0, name.lastIndexOf("."));
+        }
+        if (!isValidUUID(name)) {
+            name = UUID.randomUUID().toString();
+        }
+        // add the ext before upload
+        String realName = name + "." + StringUtils.getFilenameExtension(file.getOriginalFilename());
+        return storageService.uploadFile(file, path, realName)
+                ? ResponseEntity.ok().body(Response.ok().put("path", path.getPath()).put("name", realName).body())
+                : ResponseEntity.internalServerError().body(Response.error("Fail to upload file.").body());
     }
 
     /**
-     * Delete a file. Depend on {@link ResourceConfig#SYSTEM_RESOURCE_TYPE}
+     * Delete a file. Depend on {@link ResourceConfig#getSystemResourceType()}
      *
      * @param type type of Path {@link Resource.Path#ordinal() }
-     * @param name name expect of the file
+     * @param name name of File
      * @return success => 200
      * @see Resource.Path#ADS
      * @see Resource.Path#ALBUMS
@@ -96,14 +92,39 @@ public class ResourceController {
         if (name == null) {
             return ResponseEntity.badRequest().body(Response.error("Name is null!"));
         }
-        try {
-            Resource.Path path = Resource.Path.values()[type];
-            return storageService.deleteFile(path, name)
-                    ? ResponseEntity.ok().body(Response.ok().put("path", path.getPath()).put("name", name).body())
-                    : ResponseEntity.internalServerError().body(Response.error("Fail to delete file.").body());
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(Response.error(e.getMessage()).body());
+        Resource.Path path = Resource.Path.values()[type];
+        return storageService.deleteFile(path, name)
+                ? ResponseEntity.ok().body(Response.ok().put("path", path.getPath()).put("name", name).body())
+                : ResponseEntity.internalServerError().body(Response.error("Fail to delete file.").body());
+    }
+
+    /**
+     * Get url to access file. Depend on {@link ResourceConfig#getSystemResourceType()}
+     *
+     * @param type type of Path {@link Resource.Path#ordinal() }
+     * @param name name of File
+     * @return success => 200
+     * @see Resource.Path#ADS
+     * @see Resource.Path#ALBUMS
+     * @see Resource.Path#CATEGORIES
+     * @see Resource.Path#PLAYLISTS
+     * @see Resource.Path#SONGS
+     * @see Resource.Path#TOPICS
+     * @see Resource.Path#AUDIO
+     */
+    @RequestMapping("/get")
+    public ResponseEntity<?> getUrl(@RequestParam(name = "type") int type,
+                                    @RequestParam(name = "name") String name) {
+        if (type < 0 || type >= Resource.Path.values().length) {
+            Response response = Response.error(String.format("Type from 0 to %d", Resource.Path.values().length - 1));
+            return ResponseEntity.badRequest().body(response.body());
         }
+        Resource.Path path = Resource.Path.values()[type];
+        return ResponseEntity.ok(Response.ok()
+                .put("url", Resource.getUrl(path, name))
+                .put("path", path.getPath())
+                .put("name", name)
+                .body());
     }
 
     private boolean isValidUUID(@Nullable String uuid) {

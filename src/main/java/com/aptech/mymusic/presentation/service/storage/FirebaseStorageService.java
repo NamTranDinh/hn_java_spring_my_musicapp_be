@@ -1,5 +1,6 @@
 package com.aptech.mymusic.presentation.service.storage;
 
+import com.aptech.mymusic.config.ResourceConfig;
 import com.aptech.mymusic.presentation.internalmodel.Resource;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.*;
@@ -18,24 +19,21 @@ import java.util.concurrent.TimeUnit;
 
 public class FirebaseStorageService extends StorageService {
 
-    public static final String PROJECT_ID = "mymusic-21f69";
-    public static final String BUCKET_NAME = "mymusic-21f69.appspot.com";
-    public static final String CREDENTIALS_PATH = "./firebase/mymusic-21f69-firebase-adminsdk-lvv54-f1a35b2cb5.json";
-
     FirebaseStorageService() {
     }
 
     @Override
     protected void init() {
+        ResourceConfig config = ResourceConfig.getInstance();
         try {
-            FirebaseApp.getInstance(PROJECT_ID);
+            FirebaseApp.getInstance(config.getGcpProjectId());
         } catch (IllegalStateException e) {
             FirebaseOptions options = FirebaseOptions.builder()
                     .setCredentials(getCredentials())
-                    .setProjectId(PROJECT_ID)
-                    .setStorageBucket(BUCKET_NAME)
+                    .setProjectId(config.getGcpProjectId())
+                    .setStorageBucket(config.getGcpBucketName())
                     .build();
-            FirebaseApp.initializeApp(options, PROJECT_ID);
+            FirebaseApp.initializeApp(options, config.getGcpProjectId());
         }
     }
 
@@ -93,7 +91,7 @@ public class FirebaseStorageService extends StorageService {
 
     private static GoogleCredentials getCredentials() {
         try {
-            return GoogleCredentials.fromStream(Files.newInputStream(Paths.get(CREDENTIALS_PATH)));
+            return GoogleCredentials.fromStream(Files.newInputStream(Paths.get(ResourceConfig.getInstance().getGcpCredentialsPath())));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -101,6 +99,6 @@ public class FirebaseStorageService extends StorageService {
 
     @NotNull
     private static BlobId blobOf(@NotNull Resource.Path path, String name) {
-        return BlobId.of(BUCKET_NAME, path.getPath() + name);
+        return BlobId.of(ResourceConfig.getInstance().getGcpBucketName(), path.getPath() + name);
     }
 }

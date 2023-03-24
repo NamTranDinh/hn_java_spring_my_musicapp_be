@@ -1,5 +1,6 @@
 package com.aptech.mymusic.presentation.service.storage;
 
+import com.aptech.mymusic.config.ResourceConfig;
 import com.aptech.mymusic.presentation.internalmodel.Resource;
 import com.google.common.io.Files;
 import org.jetbrains.annotations.NotNull;
@@ -13,8 +14,6 @@ import java.io.File;
 import java.io.IOException;
 
 public class LocalStorageService extends StorageService {
-
-    private static final String RESOURCE_STATIC_PATH = "./src/main/resources/static/";
 
     LocalStorageService() {
     }
@@ -45,17 +44,12 @@ public class LocalStorageService extends StorageService {
         return false;
     }
 
-    @NotNull
-    private File fileOf(@NotNull Resource.Path path, String name) {
-        return new File(RESOURCE_STATIC_PATH, path.getPath() + name);
-    }
-
     @Nullable
     public static String getUrl(@NotNull Resource.Path path, String name) {
         if (getBaseUrl() == null) {
             return null;
         }
-        return BASE_URL + path.getPath() + name;
+        return BASE_URL + ResourceConfig.getInstance().getLocalResourceSuffix() + path.getPath() + name;
     }
 
     private static String BASE_URL;
@@ -74,4 +68,10 @@ public class LocalStorageService extends StorageService {
         }
         return BASE_URL;
     }
+
+    @NotNull
+    private static File fileOf(@NotNull Resource.Path path, String name) {
+        return new File(ResourceConfig.getInstance().getLocalResourcePath(), path.getPath() + name);
+    }
+
 }
