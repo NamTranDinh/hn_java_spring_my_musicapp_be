@@ -1,4 +1,4 @@
-package com.aptech.mymusic.config.component;
+package com.aptech.mymusic.presentation.security.jwt;
 
 import io.jsonwebtoken.JwtException;
 import org.jetbrains.annotations.NotNull;
@@ -17,9 +17,11 @@ import java.io.IOException;
 @Component
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
+    private final JwtCookiesManager jwtCookiesManager;
     private final JwtTokenProvider jwtTokenProvider;
 
-    public JwtAuthorizationFilter(JwtTokenProvider jwtTokenProvider) {
+    public JwtAuthorizationFilter(JwtCookiesManager jwtCookiesManager, JwtTokenProvider jwtTokenProvider) {
+        this.jwtCookiesManager = jwtCookiesManager;
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
@@ -27,6 +29,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull FilterChain chain) throws ServletException, IOException {
         try {
             String token = jwtTokenProvider.resolveToken(request);
+            if (token == null) {
+                token = jwtCookiesManager.getLoginSessionToken(request);
+            }
             if (token != null && jwtTokenProvider.validateToken(token)) {
                 Authentication auth = jwtTokenProvider.getAuthentication(token);
                 SecurityContextHolder.getContext().setAuthentication(auth);

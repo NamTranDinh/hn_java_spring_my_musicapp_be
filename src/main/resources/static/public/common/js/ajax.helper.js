@@ -314,6 +314,12 @@ function shuffleArray(array) {
     return array;
 }
 
+function removeUrlParamAndReplace(param) {
+    let url = new URL(window.location.href);
+    url.searchParams.delete('error');
+    window.history.replaceState({}, '', url);
+}
+
 function savePdf(ele, fileName = generatePassword(16)) {
     if (typeof ele == 'string') {
         ele = $(ele)[0]

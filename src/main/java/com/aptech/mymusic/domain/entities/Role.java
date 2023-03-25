@@ -1,5 +1,7 @@
 package com.aptech.mymusic.domain.entities;
 
+import com.aptech.mymusic.utils.annotation.IgnoreField;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,9 +30,11 @@ public class Role {
     private Enums.Status status;
 
     @Column(name = "created_at")
+    @IgnoreField
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
+    @IgnoreField
     private LocalDateTime updatedAt;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -38,6 +42,7 @@ public class Role {
             name = "ma_role_permission",
             joinColumns = @JoinColumn(name = "role_id"),
             inverseJoinColumns = @JoinColumn(name = "permission_id"))
+    @IgnoreField
     private List<Permission> permissions;
 
     public Role() {

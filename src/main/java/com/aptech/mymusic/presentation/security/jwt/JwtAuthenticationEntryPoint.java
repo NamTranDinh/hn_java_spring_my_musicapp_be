@@ -1,5 +1,6 @@
-package com.aptech.mymusic.config.component;
+package com.aptech.mymusic.presentation.security.jwt;
 
+import com.aptech.mymusic.presentation.security.SecurityConstant;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,12 +14,12 @@ import java.io.IOException;
 
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationEntryPoint.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationEntryPoint.class);
 
     @Override
     public void commence(HttpServletRequest request, @NotNull HttpServletResponse response,
                          @NotNull AuthenticationException authException) throws IOException {
-        LOGGER.error("Unauthorized error: {}", authException.getMessage());
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+        LOGGER.warn("Unauthorized error: {}", authException.getMessage());
+        response.sendRedirect(SecurityConstant.LOGIN_PAGE);
     }
 }

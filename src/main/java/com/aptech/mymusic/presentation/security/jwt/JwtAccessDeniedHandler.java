@@ -1,4 +1,4 @@
-package com.aptech.mymusic.config.component;
+package com.aptech.mymusic.presentation.security.jwt;
 
 import com.aptech.mymusic.presentation.internalmodel.Response;
 import com.fasterxml.jackson.databind.ObjectMapper;

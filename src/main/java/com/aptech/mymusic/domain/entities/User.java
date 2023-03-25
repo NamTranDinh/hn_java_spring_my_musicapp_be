@@ -1,5 +1,6 @@
 package com.aptech.mymusic.domain.entities;
 
+import com.aptech.mymusic.utils.annotation.IgnoreField;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -60,9 +61,11 @@ public class User {
     private Enums.Status status;
 
     @Column(name = "created_at")
+    @IgnoreField
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
+    @IgnoreField
     private LocalDateTime updatedAt;
 
     public User() {

@@ -1,5 +1,8 @@
-package com.aptech.mymusic.config.component;
+package com.aptech.mymusic.presentation.security.jwt;
 
+import com.aptech.mymusic.domain.entities.User;
+import com.aptech.mymusic.domain.entities.UserDetail;
+import com.aptech.mymusic.utils.JsonHelper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -7,34 +10,24 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.Base64;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class JwtTokenProvider {
 
+    private static final String KEY_USER_OBJECT = "k_user_object";
     @Value("${jwt.secret}")
     private String secretKey;
-
-    @Value("${jwt.expiration.ms}")
-    private Long expirationMs;
-
     private SecretKey key;
-
-    private final UserDetailsService userDetailsService;
-
-    public JwtTokenProvider(UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
-    }
 
     @PostConstruct
     public void init() {
@@ -43,13 +36,13 @@ public class JwtTokenProvider {
         this.key = new SecretKeySpec(keyBytes, "HmacSHA256");
     }
 
-    public String generateToken(String username) {
+    public String generateToken(@NotNull UserDetail userDetails, long expirationMs) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expirationMs);
         Map<String, Object> claims = new HashMap<>();
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        claims.put("sub", userDetails.getUsername());
-        claims.put("roles", userDetails.getAuthorities());
+        claims.put(Claims.ID, userDetails.getUser().getId());
+        claims.put(Claims.SUBJECT, userDetails.getUsername());
+        claims.put(KEY_USER_OBJECT, JsonHelper.objToJson(userDetails.getUser()));
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
@@ -58,18 +51,26 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    @SuppressWarnings("unchecked")
     public Authentication getAuthentication(String token) {
+        UserDetail userDetail = getUserDetail(token);
+        return new UsernamePasswordAuthenticationToken(userDetail, "", userDetail.getAuthorities());
+    }
+
+    public UserDetail getUserDetail(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(key)
                 .parseClaimsJws(token)
                 .getBody();
+        User user = JsonHelper.jsonToObj((String) claims.get(KEY_USER_OBJECT), User.class);
+        return new UserDetail(user);
+    }
 
-        UserDetails userDetails = User.builder()
-                .username(claims.getSubject())
-                .authorities((Collection<? extends GrantedAuthority>) claims.get("roles"))
-                .build();
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+    public String getUserName(String token) {
+        try {
+            return Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody().getSubject();
+        } catch (Exception e) {
+            return "";
+        }
     }
 
     public String resolveToken(@NotNull HttpServletRequest request) {
