@@ -85,36 +85,46 @@ public class Resource {
     }
 
     public enum Layout {
-        CommonMaster("templates/master/common_layout.html"),
-        AdminMaster("templates/master/admin_layout.html"),
-        ClientMaster("templates/master/client_layout.html"),
-        CommonFragment("templates/fragments/common_fragments.html"),
-        AdminFragment("templates/fragments/admin_fragments.html"),
-        ClientFragment("templates/fragments/client_fragments.html");
+        MasterCommon("templates/master/common_layout.html"),
+        MasterAdmin("templates/master/admin_layout.html"),
+        MasterAdminBlank("templates/master/admin_blank_layout.html"),
+        MasterClient("templates/master/client_layout.html"),
+        SharedCommon("templates/common/shared.html");
 
         private final String name;
 
         Layout(@NotNull String name) {
-            this.name = name.substring("templates/".length(), name.lastIndexOf("."));
+            this.name = verifyLayout(name);
         }
 
         @NotNull
         public String getName() {
             return name;
         }
+
+        @NotNull
+        public static String verifyLayout(@NotNull String layout) {
+            if (layout.startsWith("templates/")) {
+                layout = layout.substring("templates/".length());
+            }
+            if (layout.endsWith(".html")) {
+                layout = layout.substring(0, layout.lastIndexOf("."));
+            }
+            return layout;
+        }
     }
 
     public enum Icon {
-        MusicIcon("static/public/icons/icon_music.png");
+        AppLogo("static/public/admin/assets/img/favicon/favicon.ico");
         private final String name;
 
         Icon(@NotNull String name) {
-            this.name = name.substring("static/".length());
+            this.name = name.substring("static".length());
         }
 
         @NotNull
         public String getName() {
-            return getBaseUrl() + name;
+            return name;
         }
     }
 }

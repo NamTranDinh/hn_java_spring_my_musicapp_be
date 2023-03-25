@@ -6,6 +6,7 @@ import com.aptech.mymusic.presentation.internalmodel.Response;
 import com.aptech.mymusic.presentation.service.storage.StorageFactory;
 import com.aptech.mymusic.presentation.service.storage.StorageService;
 import com.google.firebase.database.utilities.Pair;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,13 +48,13 @@ public class ResourceController {
                                         @RequestParam(name = "type") int type,
                                         @RequestParam(name = "name", required = false) String name) {
         if (type < 0 || type >= Resource.Path.values().length) {
-            Response response = Response.error(String.format("Type from 0 to %d", Resource.Path.values().length - 1));
+            Response response = Response.error(HttpStatus.BAD_REQUEST, String.format("Type from 0 to %d", Resource.Path.values().length - 1));
             return ResponseEntity.badRequest().body(response.body());
         }
         Resource.Path path = Resource.Path.values()[type];
         Pair<Boolean, String> valid = path.validFile(file);
         if (valid.getFirst() == null || !valid.getFirst()) {
-            return ResponseEntity.internalServerError().body(Response.error(valid.getSecond()).body());
+            return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(Response.error(HttpStatus.UNSUPPORTED_MEDIA_TYPE, valid.getSecond()).body());
         }
         if (name != null) {
             name = name.substring(0, name.lastIndexOf("."));
@@ -65,7 +66,7 @@ public class ResourceController {
         String realName = name + "." + StringUtils.getFilenameExtension(file.getOriginalFilename());
         return storageService.uploadFile(file, path, realName)
                 ? ResponseEntity.ok().body(Response.ok().put("path", path.getPath()).put("name", realName).body())
-                : ResponseEntity.internalServerError().body(Response.error("Fail to upload file.").body());
+                : ResponseEntity.internalServerError().body(Response.error(HttpStatus.INTERNAL_SERVER_ERROR, "Fail to upload file.").body());
     }
 
     /**
@@ -86,16 +87,16 @@ public class ResourceController {
     public ResponseEntity<?> deleteFile(@RequestParam(name = "type") int type,
                                         @RequestParam(name = "name") String name) {
         if (type < 0 || type >= Resource.Path.values().length) {
-            Response response = Response.error(String.format("Type from 0 to %d", Resource.Path.values().length - 1));
+            Response response = Response.error(HttpStatus.BAD_REQUEST, String.format("Type from 0 to %d", Resource.Path.values().length - 1));
             return ResponseEntity.badRequest().body(response.body());
         }
         if (name == null) {
-            return ResponseEntity.badRequest().body(Response.error("Name is null!"));
+            return ResponseEntity.badRequest().body(Response.error(HttpStatus.BAD_REQUEST, "Name is null!"));
         }
         Resource.Path path = Resource.Path.values()[type];
         return storageService.deleteFile(path, name)
                 ? ResponseEntity.ok().body(Response.ok().put("path", path.getPath()).put("name", name).body())
-                : ResponseEntity.internalServerError().body(Response.error("Fail to delete file.").body());
+                : ResponseEntity.internalServerError().body(Response.error(HttpStatus.INTERNAL_SERVER_ERROR, "Fail to delete file.").body());
     }
 
     /**
@@ -116,7 +117,7 @@ public class ResourceController {
     public ResponseEntity<?> getUrl(@RequestParam(name = "type") int type,
                                     @RequestParam(name = "name") String name) {
         if (type < 0 || type >= Resource.Path.values().length) {
-            Response response = Response.error(String.format("Type from 0 to %d", Resource.Path.values().length - 1));
+            Response response = Response.error(HttpStatus.BAD_REQUEST, String.format("Type from 0 to %d", Resource.Path.values().length - 1));
             return ResponseEntity.badRequest().body(response.body());
         }
         Resource.Path path = Resource.Path.values()[type];

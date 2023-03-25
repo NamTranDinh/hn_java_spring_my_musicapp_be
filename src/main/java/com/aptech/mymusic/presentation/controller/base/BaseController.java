@@ -1,44 +1,36 @@
 package com.aptech.mymusic.presentation.controller.base;
 
 import com.aptech.mymusic.presentation.internalmodel.Context;
-import com.aptech.mymusic.presentation.internalmodel.Fragment;
 import com.aptech.mymusic.presentation.internalmodel.Resource;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.data.util.Pair;
 import org.springframework.web.servlet.ModelAndView;
 
 public abstract class BaseController {
 
     private static final String ATTR_CONTEXT = "context";
-    private static final String DEFAULT_HEADER_FRAGMENT_NAME = "head";
 
-    protected ModelAndView view(Context context) {
-        return view(new ModelAndView(), context);
+    @NotNull
+    @SafeVarargs
+    protected final ModelAndView view(Context context, Pair<String, Object>... data) {
+        return view(new ModelAndView(), context, data);
     }
 
-    protected ModelAndView view(@NotNull ModelAndView source, Context context) {
-        if (source.getViewName() == null) {
-            source.setViewName(context.getLayout().getName());
+    @NotNull
+    @SafeVarargs
+    protected final ModelAndView view(@NotNull ModelAndView source, Context context, Pair<String, Object>... data) {
+        if (source.getViewName() == null && context != null) {
+            source.setViewName(context.getLayout());
+        }
+        if (data != null) for (Pair<String, Object> pair : data) {
+            source.addObject(pair.getFirst(), pair.getSecond());
         }
         source.addObject(ATTR_CONTEXT, context);
         return source;
     }
 
-    protected Context defaultContext() {
-        return Context.builder()
-                .setIcon(Resource.Icon.MusicIcon)
-                .setHeadFragment(Fragment.of(Resource.Layout.CommonFragment, DEFAULT_HEADER_FRAGMENT_NAME));
-    }
-
-    protected Context defaultAdminContext() {
-        return Context.builder(Resource.Layout.AdminMaster)
-                .setIcon(Resource.Icon.MusicIcon)
-                .setHeadFragment(Fragment.of(Resource.Layout.AdminFragment, DEFAULT_HEADER_FRAGMENT_NAME));
-    }
-
-    protected Context defaultClientContext() {
-        return Context.builder(Resource.Layout.ClientMaster)
-                .setIcon(Resource.Icon.MusicIcon)
-                .setHeadFragment(Fragment.of(Resource.Layout.ClientFragment, DEFAULT_HEADER_FRAGMENT_NAME));
+    protected Context buildContext(Resource.Layout layout) {
+        return Context.builder(layout).setIcon(Resource.Icon.AppLogo);
     }
 
 }

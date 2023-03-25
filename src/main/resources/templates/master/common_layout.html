@@ -1,8 +1,8 @@
 <!--/*@thymesVar id="context" type="com.aptech.mymusic.presentation.internalmodel.Context"*/-->
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="${context.headFragment.layout}::${context.headFragment.name}"><title>Title</title></head>
+<head th:include="common/shared::head"></head>
 <body>
-<div th:replace="${context.contentFragment.layout}::${context.contentFragment.name}"></div>
+<div th:replace="${context.content.layout}::${context.content.name}"></div>
 </body>
 </html>

@@ -3,16 +3,27 @@ package com.aptech.mymusic.presentation.internalmodel;
 import org.jetbrains.annotations.NotNull;
 
 public class Fragment {
+    private static final String DEFAULT_FRAGMENT_NAME = "index";
     private String layout;
     private String name;
 
     @NotNull
-    public static Fragment of(String layout, String name) {
-        return new Fragment().setLayout(layout).setName(name);
+    public static Fragment of(@NotNull Resource.Layout layout) {
+        return of(layout.getName(), DEFAULT_FRAGMENT_NAME);
+    }
+
+    @NotNull
+    public static Fragment of(String layout) {
+        return of(layout, DEFAULT_FRAGMENT_NAME);
     }
 
     @NotNull
     public static Fragment of(@NotNull Resource.Layout layout, String name) {
+        return of(layout.getName(), name);
+    }
+
+    @NotNull
+    public static Fragment of(String layout, String name) {
         return new Fragment().setLayout(layout).setName(name);
     }
 
@@ -23,13 +34,12 @@ public class Fragment {
         return layout;
     }
 
-    public Fragment setLayout(String layout) {
-        this.layout = layout;
-        return this;
+    public Fragment setLayout(@NotNull Resource.Layout layout) {
+        return setLayout(layout.getName());
     }
 
-    public Fragment setLayout(@NotNull Resource.Layout layout) {
-        this.layout = layout.getName();
+    public Fragment setLayout(@NotNull String layout) {
+        this.layout = Resource.Layout.verifyLayout(layout);
         return this;
     }
 

@@ -217,17 +217,18 @@ function loadUrl(url, success = null, error = null, type = "GET", data = null) {
     adapter_ajax($param);
 }
 
-function loadScripts(src, raw = false, head = false) {
-    let container = head ? "head" : "body"
-    let contentScriptSelector = container + " .contentScript"
+function loadScripts(src, raw = false, head = false, selector = ".LoadedScript") {
+    const container = head ? "head" : "body";
+    const contentScriptSelector = container + " " + selector;
     let contentScript = $(contentScriptSelector);
     if (contentScript.length === 0) {
-        $(container).append("<div class='contentScript'></div>")
+        let attrName = selector.startsWith(".") ? "class" : "id";
+        let attrValue = selector.substring(1);
+        let div = $("<div></div>").attr(attrName, attrValue);
+        $(container).append(div);
         contentScript = $(contentScriptSelector);
     }
-    let content = raw ?
-        "<script>" + src + "</script>" :
-        "<script src='" + src + "'></script>";
+    let content = raw ? "<script>" + src + "</script>" : "<script src='" + src + "'></script>";
     contentScript.html(content);
 }
 
@@ -345,7 +346,6 @@ function previewPdf(ele) {
     let top = screen.height / 6;
     let params = 'width=' + width + ',height=' + height + ',left=' + left + ',top=' + top;
     let printWindow = window.open('', '', params);
-    // noinspection HtmlRequiredTitleElement,HtmlRequiredLangAttribute
     printWindow.document.write('<html><head>' + $("head").html() + '</head>');
     printWindow.document.write('<body class="container-fluid p-0" onafterprint="close()">');
     printWindow.document.write(ele.parent().html());

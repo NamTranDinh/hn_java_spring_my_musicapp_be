@@ -3,9 +3,8 @@ package com.aptech.mymusic.presentation.internalmodel;
 import org.jetbrains.annotations.NotNull;
 
 public class Context {
-    private Resource.Layout layout;
-    private Fragment headFragment;
-    private Fragment contentFragment;
+    private String layout;
+    private Fragment content;
     private String title;
     private String icon;
 
@@ -13,39 +12,30 @@ public class Context {
     }
 
     @NotNull
-    public static Context builder() {
-        return builder(Resource.Layout.CommonMaster);
-    }
-
-    @NotNull
     public static Context builder(Resource.Layout layout) {
         return new Context().setLayout(layout);
     }
 
-    public Resource.Layout getLayout() {
+    public String getLayout() {
         return layout;
     }
 
-    public Context setLayout(Resource.Layout layout) {
+    public Context setLayout(String layout) {
         this.layout = layout;
         return this;
     }
 
-    public Fragment getHeadFragment() {
-        return headFragment;
-    }
-
-    public Context setHeadFragment(Fragment headFragment) {
-        this.headFragment = headFragment;
+    public Context setLayout(@NotNull Resource.Layout layout) {
+        this.layout = layout.getName();
         return this;
     }
 
-    public Fragment getContentFragment() {
-        return contentFragment;
+    public Fragment getContent() {
+        return content;
     }
 
-    public Context setContentFragment(Fragment contentFragment) {
-        this.contentFragment = contentFragment;
+    public Context setContent(Fragment content) {
+        this.content = content;
         return this;
     }
 

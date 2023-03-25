@@ -19,9 +19,9 @@ public class PublicHomeController extends BaseController {
 
     @GetMapping("/home")
     public ModelAndView home() {
-        return view(defaultContext()
+        return view(buildContext(Resource.Layout.MasterCommon)
                 .setTitle("Home")
-                .setContentFragment(Fragment.of(Resource.Layout.CommonFragment, "content"))
+                .setContent(Fragment.of(Resource.Layout.SharedCommon, "content"))
         );
     }
 
