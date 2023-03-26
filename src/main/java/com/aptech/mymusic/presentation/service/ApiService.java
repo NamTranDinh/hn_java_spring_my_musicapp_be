@@ -46,7 +46,7 @@ public class ApiService {
 
     public List<Song> getNewlyReleasedMusic() {
         return em.createQuery("SELECT s FROM Song s WHERE s.status = :status ORDER BY s.id DESC", Song.class)
-                .setParameter("status", Enums.Status.ACTIVE.ordinal())
+                .setParameter("status", Enums.Status.ACTIVE)
                 .setMaxResults(10)
                 .getResultList();
     }
@@ -54,7 +54,7 @@ public class ApiService {
     public List<Song> getAllSongFrom(String type, String id) {
         String query = "SELECT s FROM Song s WHERE s.status = :status AND FUNCTION('JSON_CONTAINS', s." + type + "Ids, :id) = 1 ORDER BY s.id DESC";
         return em.createQuery(query, Song.class)
-                .setParameter("status", Enums.Status.ACTIVE.ordinal())
+                .setParameter("status", Enums.Status.ACTIVE)
                 .setParameter("id", id)
                 .getResultList();
     }
@@ -73,7 +73,7 @@ public class ApiService {
                 ") ORDER BY RAND()";
         return em.createQuery(query, Song.class)
                 .setParameter("listIds", listIds)
-                .setParameter("status", Enums.Status.ACTIVE.ordinal())
+                .setParameter("status", Enums.Status.ACTIVE)
                 .setParameter("albumIds", song.getAlbumIds())
                 .setParameter("categoryIds", song.getCategoryIds())
                 .setParameter("playlistIds", song.getPlaylistIds())
@@ -87,11 +87,13 @@ public class ApiService {
                 .filter(s1 -> s1 != null && !s1.trim().isEmpty())
                 .map(String::trim)
                 .collect(Collectors.toList());
-        keySearches.add(nameSong);
-
+        if (keySearches.size() != 1) {
+            keySearches.add(0, nameSong);
+        }
         List<String> tmp = new ArrayList<>();
         for (int i = 0; i < keySearches.size(); i++) {
-            tmp.add("upper(s.name) like upper(concat('%', :search_" + i + ", '%'))");
+            tmp.add(String.format("upper(s.name) like concat('%%', :search_name_%s, '%%')", i));
+            tmp.add(String.format("upper(s.singerName) like concat('%%', :search_singer_name_%s, '%%')", i));
         }
         String conditions = String.join(" or ", tmp);
 
@@ -99,11 +101,12 @@ public class ApiService {
 
         TypedQuery<Song> q = em.createQuery(query, Song.class);
         for (int i = 0; i < keySearches.size(); i++) {
-            q.setParameter("search_" + i, keySearches.get(i));
+            q.setParameter("search_name_" + i, keySearches.get(i));
+            q.setParameter("search_singer_name_" + i, keySearches.get(i));
         }
 
-        return q.setParameter("status", Enums.Status.ACTIVE.ordinal())
-                .setMaxResults(5)
+        return q.setParameter("status", Enums.Status.ACTIVE)
+                .setMaxResults(10)
                 .getResultList();
     }
 

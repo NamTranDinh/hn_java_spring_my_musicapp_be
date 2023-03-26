@@ -119,8 +119,8 @@ public class ApiMusicController {
     // SEARCH SONGS
     ///////////////////////////////////////////////////////////////////////////
 
-    @RequestMapping("/search_song/{name}")
-    public List<Song> searchSongByName(@PathVariable(name = "name") String nameSong) {
+    @PostMapping("/search_song")
+    public List<Song> searchSongByName(@RequestParam(name = "name") String nameSong) {
         return service.searchSongByName(nameSong);
     }
 
