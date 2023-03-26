@@ -10,18 +10,19 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping("/admin")
-public class HomeController extends BaseController {
+public class DashboardController extends BaseController {
 
-    @GetMapping
+    @Override
+    @RequestMapping
     public ModelAndView index() {
         return home();
     }
 
-    @GetMapping("/home")
+    @GetMapping("/dashboard")
     public ModelAndView home() {
-        return view(buildContext(Resource.Layout.MasterAdminBlank)
-                .setTitle("Admin | Home")
-                .setContent(Fragment.of("templates/admin/pages/home/home.html")));
+        return view(buildContext(Resource.Layout.MasterAdmin)
+                .setTitle("Dashboard")
+                .setContent(Fragment.of("templates/admin/pages/home/dashboard.html")));
     }
 
 }

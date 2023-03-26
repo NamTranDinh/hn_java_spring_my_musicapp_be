@@ -4,11 +4,14 @@ import com.aptech.mymusic.presentation.internalmodel.Context;
 import com.aptech.mymusic.presentation.internalmodel.Resource;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.util.Pair;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 public abstract class BaseController {
 
     private static final String ATTR_CONTEXT = "context";
+
+   public abstract ModelAndView index();
 
     @NotNull
     @SafeVarargs

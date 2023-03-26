@@ -1,4 +1,4 @@
-package com.aptech.mymusic.presentation.controller.admin;
+package com.aptech.mymusic.presentation.controller.admin.auth;
 
 import com.aptech.mymusic.presentation.controller.base.BaseController;
 import com.aptech.mymusic.presentation.internalmodel.Fragment;
@@ -29,7 +29,8 @@ public class AuthController extends BaseController {
         this.jwtCookiesManager = jwtCookiesManager;
     }
 
-    @GetMapping
+    @Override
+    @RequestMapping
     public ModelAndView index() {
         return new ModelAndView("redirect:/admin/auth/login");
     }
@@ -40,7 +41,7 @@ public class AuthController extends BaseController {
             return redirect();
         }
         return view(buildContext(Resource.Layout.MasterAdminBlank)
-                .setTitle("MyMusic | Auth-Login")
+                .setTitle("Login")
                 .setContent(Fragment.of("templates/admin/pages/auth/login.html")))
                 .addObject("error", LoginError.decode(error));
     }
@@ -59,7 +60,7 @@ public class AuthController extends BaseController {
     @GetMapping("/redirect")
     public ModelAndView redirect() {
         LOGGER.warn("Redirect {}", SecurityContextHolder.getContext().getAuthentication().getAuthorities());
-        return new ModelAndView("redirect:/admin/home");
+        return new ModelAndView("redirect:/admin");
     }
 
 }

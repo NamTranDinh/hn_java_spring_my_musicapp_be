@@ -316,8 +316,15 @@ function shuffleArray(array) {
 
 function removeUrlParamAndReplace(param) {
     let url = new URL(window.location.href);
-    url.searchParams.delete('error');
+    url.searchParams.delete(param);
     window.history.replaceState({}, '', url);
+}
+
+function documentReady(callback) {
+    document.addEventListener("DOMContentLoaded", function cb() {
+        callback()
+        document.removeEventListener('DOMContentLoaded', cb)
+    });
 }
 
 function savePdf(ele, fileName = generatePassword(16)) {

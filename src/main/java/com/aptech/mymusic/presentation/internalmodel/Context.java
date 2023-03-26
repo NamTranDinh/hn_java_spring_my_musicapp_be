@@ -3,6 +3,7 @@ package com.aptech.mymusic.presentation.internalmodel;
 import org.jetbrains.annotations.NotNull;
 
 public class Context {
+    private static final String TITLE_PREFIX = "AzMedia: ";
     private String layout;
     private Fragment content;
     private String title;
@@ -41,6 +42,10 @@ public class Context {
 
     public String getTitle() {
         return title;
+    }
+
+    public String getTitleWithPrefix() {
+        return TITLE_PREFIX + title;
     }
 
     public Context setTitle(String title) {

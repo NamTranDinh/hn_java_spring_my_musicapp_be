@@ -12,7 +12,8 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/public")
 public class PublicHomeController extends BaseController {
 
-    @GetMapping
+    @Override
+    @RequestMapping
     public ModelAndView index() {
         return home();
     }
@@ -21,7 +22,7 @@ public class PublicHomeController extends BaseController {
     public ModelAndView home() {
         return view(buildContext(Resource.Layout.MasterCommon)
                 .setTitle("Home")
-                .setContent(Fragment.of(Resource.Layout.SharedCommon, "content"))
+                .setContent(Fragment.of(Resource.Layout.SharedCommon))
         );
     }
 

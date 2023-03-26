@@ -9,8 +9,10 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/")
 public class IndexController extends BaseController {
 
+    @Override
     @RequestMapping
     public ModelAndView index() {
         return new ModelAndView("redirect:/public");
     }
+
 }
