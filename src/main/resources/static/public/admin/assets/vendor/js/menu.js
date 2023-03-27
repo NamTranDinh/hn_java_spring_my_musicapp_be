@@ -30,7 +30,7 @@ class Menu {
                 wheelPropagation: !Menu._hasClass('layout-menu-fixed layout-menu-fixed-offcanvas')
             })
 
-            window.Helpers.menuPsScroll = this._scrollbar
+            Helpers.menuPsScroll = this._scrollbar
         } else {
             el.querySelector('.menu-inner').classList.add('overflow-auto')
         }
@@ -74,7 +74,7 @@ class Menu {
                 }
             }
         }
-        if (window.Helpers.isMobileDevice) this._el.addEventListener('click', this._evntElClick)
+        if (Helpers.isMobileDevice) this._el.addEventListener('click', this._evntElClick)
 
         this._evntWindowResize = () => {
             this.update()
@@ -187,7 +187,7 @@ class Menu {
     }
 
     // Has class
-    static _hasClass(cls, el = window.Helpers.ROOT_EL) {
+    static _hasClass(cls, el = Helpers.ROOT_EL) {
         let result = false
 
         cls.split(' ').forEach(c => {
@@ -514,9 +514,9 @@ class Menu {
         const { PerfectScrollbar } = window
         const menuInner = document.querySelector('.menu-inner')
 
-        if (window.innerWidth < window.Helpers.LAYOUT_BREAKPOINT) {
+        if (window.innerWidth < Helpers.LAYOUT_BREAKPOINT) {
             if (this._scrollbar !== null) {
-                // window.Helpers.menuPsScroll.destroy()
+                // Helpers.menuPsScroll.destroy()
                 this._scrollbar.destroy()
                 this._scrollbar = null
             }

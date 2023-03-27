@@ -16,17 +16,17 @@ let menu, animate;
             orientation: 'vertical',
             closeChildren: false
         });
-        // Change parameter to true if you want scroll animation
-        window.Helpers.scrollToActive((animate = false));
-        window.Helpers.mainMenu = menu;
+        Helpers.mainMenu = menu;
+        Helpers.initMenu()
+        Helpers.scrollToActive((animate = false)); // Change parameter to true if you want scroll animation
     });
 
-    // Initialize menu togglers and bind click on each
+    // Initialize menu toggles and bind click on each
     let menuToggle = document.querySelectorAll('.layout-menu-toggle');
     menuToggle.forEach(item => {
         item.addEventListener('click', event => {
             event.preventDefault();
-            window.Helpers.toggleCollapsed();
+            Helpers.toggleCollapsed();
         });
     });
 
@@ -95,24 +95,24 @@ let menu, animate;
     });
 
     // Auto update layout based on screen size
-    window.Helpers.setAutoUpdate(true);
+    Helpers.setAutoUpdate(true);
 
     // Toggle Password Visibility
-    window.Helpers.initPasswordToggle();
+    Helpers.initPasswordToggle();
 
     // Speech To Text
-    window.Helpers.initSpeechToText();
+    Helpers.initSpeechToText();
 
     // Manage menu expanded/collapsed with templateCustomizer & local storage
     //------------------------------------------------------------------
 
     // If current layout is horizontal OR current window screen is small (overlay menu) than return from here
-    if (window.Helpers.isSmallScreen()) {
+    if (Helpers.isSmallScreen()) {
         return;
     }
 
     // If current layout is vertical and current window screen is > small
 
     // Auto update menu collapsed/expanded based on the themeConfig
-    window.Helpers.setCollapsed(true, false);
+    Helpers.setCollapsed(true, false);
 })();

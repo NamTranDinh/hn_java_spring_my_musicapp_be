@@ -8,6 +8,7 @@ public class Context {
     private Fragment content;
     private String title;
     private String icon;
+    private boolean ajax;
 
     private Context() {
     }
@@ -67,4 +68,11 @@ public class Context {
         return this;
     }
 
+    public boolean isAjax() {
+        return ajax;
+    }
+
+    public void setAjax(boolean ajax) {
+        this.ajax = ajax;
+    }
 }

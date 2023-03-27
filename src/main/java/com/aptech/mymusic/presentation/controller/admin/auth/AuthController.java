@@ -9,12 +9,14 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
@@ -27,6 +29,8 @@ public class AuthController extends BaseController {
 
     public AuthController(JwtCookiesManager jwtCookiesManager) {
         this.jwtCookiesManager = jwtCookiesManager;
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        LOGGER.info(encoder.encode("123456"));
     }
 
     @Override

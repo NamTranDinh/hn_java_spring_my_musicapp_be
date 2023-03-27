@@ -558,6 +558,10 @@ const Helpers = {
         return !this._hasClass('menu', layoutMenu) ? layoutMenu.querySelector('.menu') : layoutMenu
     },
 
+    getLayoutContent() {
+        return document.querySelector('.layout-content')
+    },
+
     getLayoutNavbar() {
         return document.querySelector('.layout-navbar')
     },
@@ -668,7 +672,6 @@ const Helpers = {
     init() {
         if (this._initialized) return
         this._initialized = true
-        window.Helpers = this;
 
         // Initialize `style` element
         this._updateInlineStyle(0)
@@ -792,11 +795,31 @@ const Helpers = {
     },
 
     // ---
+    // initMenu
+    initMenu() {
+        let items = $(this.getLayoutMenu()).find('.menu-item .menu-link').not('.menu-toggle');
+        items.each(function () {
+            let item = $(this)
+            let url = item.attr('href')
+            item.off('click')
+                .on('click', function (e) {
+                    e.preventDefault();
+                    AjaxHelper.load('.layout-content', url, url, function (data) {
+                        console.log(data)
+                    }, function (err) {
+                        console.log(err)
+                    })
+                })
+
+        })
+    },
+
+    // ---
     // SidebarToggle (Used in Apps)
     initSidebarToggle() {
-        const sidebarToggler = document.querySelectorAll('[data-bs-toggle="sidebar"]')
+        const sidebarToggle = document.querySelectorAll('[data-bs-toggle="sidebar"]')
 
-        sidebarToggler.forEach(el => {
+        sidebarToggle.forEach(el => {
             el.addEventListener('click', () => {
                 const target = el.getAttribute('data-target')
                 const overlay = el.getAttribute('data-overlay')
@@ -825,6 +848,7 @@ const Helpers = {
             })
         })
     }
+
 }
 
 // *******************************************************************************

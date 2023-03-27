@@ -86,6 +86,7 @@ public class Resource {
 
     public enum Layout {
         MasterCommon("templates/master/common_layout.html"),
+        MasterAjax("templates/master/ajax_layout.html"),
         MasterAdmin("templates/master/admin_layout.html"),
         MasterAdminBlank("templates/master/admin_blank_layout.html"),
         MasterClient("templates/master/client_layout.html"),

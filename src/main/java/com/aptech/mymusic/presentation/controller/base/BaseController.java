@@ -4,14 +4,16 @@ import com.aptech.mymusic.presentation.internalmodel.Context;
 import com.aptech.mymusic.presentation.internalmodel.Resource;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.util.Pair;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
 public abstract class BaseController {
 
+    private static final String PARAMETER_AJAX = "ajax";
     private static final String ATTR_CONTEXT = "context";
 
-   public abstract ModelAndView index();
+    public abstract ModelAndView index();
 
     @NotNull
     @SafeVarargs
@@ -22,11 +24,19 @@ public abstract class BaseController {
     @NotNull
     @SafeVarargs
     protected final ModelAndView view(@NotNull ModelAndView source, Context context, Pair<String, Object>... data) {
-        if (source.getViewName() == null && context != null) {
+        if (context == null) {
+            context = buildContext(Resource.Layout.MasterCommon);
+        }
+        if (source.getViewName() == null) {
             source.setViewName(context.getLayout());
         }
         if (data != null) for (Pair<String, Object> pair : data) {
             source.addObject(pair.getFirst(), pair.getSecond());
+        }
+        if (isAjaxRequest()) {
+            context.setAjax(true);
+            context.setLayout(Resource.Layout.MasterAjax);
+            source.setViewName(context.getLayout());
         }
         source.addObject(ATTR_CONTEXT, context);
         return source;
@@ -34,6 +44,14 @@ public abstract class BaseController {
 
     protected Context buildContext(Resource.Layout layout) {
         return Context.builder(layout).setIcon(Resource.Icon.AppLogo);
+    }
+
+    private static boolean isAjaxRequest() {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (attributes != null) {
+            return attributes.getRequest().getParameter(PARAMETER_AJAX) != null;
+        }
+        return false;
     }
 
 }
