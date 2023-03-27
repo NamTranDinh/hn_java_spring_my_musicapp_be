@@ -75,4 +75,5 @@ public class Context {
     public void setAjax(boolean ajax) {
         this.ajax = ajax;
     }
+
 }

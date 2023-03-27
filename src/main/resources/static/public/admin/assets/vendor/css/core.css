@@ -5332,7 +5332,7 @@ textarea.form-control-lg {
   width: 2rem;
   height: 2rem;
   vertical-align: -0.125em;
-  border: 0.25em solid currentColor;
+  border: 0.25em solid #ffffff;
   border-right-color: transparent;
   border-radius: 50%;
   -webkit-animation: 0.75s linear infinite spinner-border;
@@ -15246,26 +15246,25 @@ html:not(.layout-menu-fixed) .menu-inner-shadow {
   justify-content: space-between;
 }
 
-.content-backdrop {
+.content-loading {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 1;
   width: 100vw;
   height: 100vh;
-  background-color: #435971;
-}
-.content-backdrop.fade {
-  opacity: 0;
-}
-.content-backdrop.show {
-  opacity: 0.5;
-}
-.layout-menu-fixed .content-backdrop {
-  z-index: 10;
-}
-.content-backdrop.fade {
+  background-color: rgba(67, 89, 113, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  visibility: hidden;
   z-index: -1;
+}
+.content-loading.show {
+  visibility: visible;
+  z-index: 1;
+}
+.layout-menu-fixed .content-loading.show {
+  z-index: 10;
 }
 
 .layout-navbar {

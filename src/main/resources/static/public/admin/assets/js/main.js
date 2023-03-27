@@ -4,21 +4,20 @@
 
 'use strict';
 
-let menu, animate;
-
 (function () {
     // Initialize menu
     //-----------------
 
     let layoutMenuEl = document.querySelectorAll('#layout-menu');
     layoutMenuEl.forEach(function (element) {
-        menu = new Menu(element, {
+        let menu = new Menu(element, {
             orientation: 'vertical',
             closeChildren: false
         });
-        Helpers.mainMenu = menu;
-        Helpers.initMenu()
-        Helpers.scrollToActive((animate = false)); // Change parameter to true if you want scroll animation
+        // Change parameter to true if you want scroll animation
+        window.Helpers.scrollToActive(false);
+        window.Helpers.mainMenu = menu;
+        window.Helpers.initMenu(element)
     });
 
     // Initialize menu toggles and bind click on each

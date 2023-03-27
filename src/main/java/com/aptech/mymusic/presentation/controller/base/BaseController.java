@@ -46,12 +46,11 @@ public abstract class BaseController {
         return Context.builder(layout).setIcon(Resource.Icon.AppLogo);
     }
 
-    private static boolean isAjaxRequest() {
+    protected static boolean isAjaxRequest() {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (attributes != null) {
             return attributes.getRequest().getParameter(PARAMETER_AJAX) != null;
         }
         return false;
     }
-
 }

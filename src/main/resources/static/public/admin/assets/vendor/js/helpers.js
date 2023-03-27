@@ -25,6 +25,9 @@ const Helpers = {
     // Resize delay in milliseconds
     RESIZE_DELAY: 200,
 
+    // Loading delay in milliseconds
+    MIN_LOADING_DELAY: 300,
+
     menuPsScroll: null,
 
     mainMenu: null,
@@ -570,6 +573,10 @@ const Helpers = {
         return document.querySelector('.content-footer')
     },
 
+    getLayoutLoading() {
+        return document.querySelector('.content-loading')
+    },
+
     // *******************************************************************************
     // * Update
 
@@ -784,12 +791,18 @@ const Helpers = {
     },
 
     // Ajax Call Promise
-    ajaxCall(url) {
+    ajaxCall(url, options = {}) {
         return new Promise((resolve, reject) => {
             const req = new XMLHttpRequest()
             req.open('GET', url)
-            req.onload = () => (req.status === 200 ? resolve(req.response) : reject(Error(req.statusText)))
-            req.onerror = e => reject(Error(`Network Error: ${e}`))
+            req.onload = () => req.status === 200 ? resolve(req.response) : reject(req.status)
+            req.onerror = e => reject(req.status)
+            req.onabort = () => {
+                console.log("onabort")
+            }
+            if (options.signal) {
+                options.signal.addEventListener('abort', () => req.abort());
+            }
             req.send()
         })
     },
@@ -847,6 +860,46 @@ const Helpers = {
                 })
             })
         })
+    },
+
+    // ---
+    // initMenu (Used in Apps)
+    initMenu2(element) {
+        element = $(element)
+
+        let timeoutId
+        let abortController
+
+        let handleLoadSuccess = data => {
+            Helpers.getLayoutLoading().classList.remove('show')
+            Helpers.getLayoutContent().innerHTML = data.toString()
+        }
+        let handleLoadError = status => {
+            console.log(status)
+            Helpers.getLayoutLoading().classList.remove('show')
+        }
+
+        element.find('.menu-item .menu-link').not('.menu-toggle')
+            .off('click')
+            .on('click', function (event) {
+                event.preventDefault();
+                const item = $(this);
+                const url = item.attr('href') + '?ajax=true'
+                const startTime = new Date().getTime();
+                Helpers.getLayoutLoading().classList.add('show')
+
+                if (abortController) abortController.abort()
+                abortController = new AbortController()
+                clearTimeout(timeoutId)
+
+                Helpers.ajaxCall(url, {signal: abortController.signal})
+                    .finally(() => abortController = null)
+                    .catch(status => handleLoadError(status))
+                    .then(data => {
+                        const timeOut = Helpers.MIN_LOADING_DELAY - (new Date().getTime() - startTime);
+                        timeoutId = setTimeout(() => handleLoadSuccess(data), timeOut)
+                    })
+            })
     }
 
 }
