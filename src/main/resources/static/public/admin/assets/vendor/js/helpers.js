@@ -28,6 +28,9 @@ const Helpers = {
     // Loading delay in milliseconds
     MIN_LOADING_DELAY: 300,
 
+    // Layout to replace load ajax data
+    LAYOUT_CONTENT_ID: '#layout-content',
+
     menuPsScroll: null,
 
     mainMenu: null,
@@ -562,7 +565,7 @@ const Helpers = {
     },
 
     getLayoutContent() {
-        return document.querySelector('.layout-content')
+        return document.querySelector(this.LAYOUT_CONTENT_ID)
     },
 
     getLayoutNavbar() {
@@ -790,43 +793,6 @@ const Helpers = {
         }
     },
 
-    // Ajax Call Promise
-    ajaxCall(url, options = {}) {
-        return new Promise((resolve, reject) => {
-            const req = new XMLHttpRequest()
-            req.open('GET', url)
-            req.onload = () => req.status === 200 ? resolve(req.response) : reject(req.status)
-            req.onerror = e => reject(req.status)
-            req.onabort = () => {
-                console.log("onabort")
-            }
-            if (options.signal) {
-                options.signal.addEventListener('abort', () => req.abort());
-            }
-            req.send()
-        })
-    },
-
-    // ---
-    // initMenu
-    initMenu() {
-        let items = $(this.getLayoutMenu()).find('.menu-item .menu-link').not('.menu-toggle');
-        items.each(function () {
-            let item = $(this)
-            let url = item.attr('href')
-            item.off('click')
-                .on('click', function (e) {
-                    e.preventDefault();
-                    AjaxHelper.load('.layout-content', url, url, function (data) {
-                        console.log(data)
-                    }, function (err) {
-                        console.log(err)
-                    })
-                })
-
-        })
-    },
-
     // ---
     // SidebarToggle (Used in Apps)
     initSidebarToggle() {
@@ -862,45 +828,113 @@ const Helpers = {
         })
     },
 
-    // ---
-    // initMenu (Used in Apps)
-    initMenu2(element) {
-        element = $(element)
-
-        let timeoutId
-        let abortController
-
-        let handleLoadSuccess = data => {
+    loadHandler: {
+        success: (into, data) => {
             Helpers.getLayoutLoading().classList.remove('show')
-            Helpers.getLayoutContent().innerHTML = data.toString()
-        }
-        let handleLoadError = status => {
+            Helpers.mainMenu?.updateActiveMenu()
+            // todo: if dashboard change -> remove this line. (temp solution)
+            if (!(typeof DashBoard == 'undefined')) {
+                DashBoard.destroy()
+            }
+            $(into).html(data)
+        },
+        error: status => {
             console.log(status)
             Helpers.getLayoutLoading().classList.remove('show')
         }
+    },
 
-        element.find('.menu-item .menu-link').not('.menu-toggle')
-            .off('click')
-            .on('click', function (event) {
-                event.preventDefault();
-                const item = $(this);
-                const url = item.attr('href') + '?ajax=true'
-                const startTime = new Date().getTime();
-                Helpers.getLayoutLoading().classList.add('show')
+    // ---
+    // initMenu
+    initMenu() {
+        let timeoutId
+        let xhr
+        const onClickListener = function (event) {
+            event.preventDefault();
+            const item = $(this)
+            const url = item.attr('href')
+            const startTime = new Date().getTime()
+            const into = Helpers.LAYOUT_CONTENT_ID
 
-                if (abortController) abortController.abort()
-                abortController = new AbortController()
-                clearTimeout(timeoutId)
-
-                Helpers.ajaxCall(url, {signal: abortController.signal})
-                    .finally(() => abortController = null)
-                    .catch(status => handleLoadError(status))
-                    .then(data => {
-                        const timeOut = Helpers.MIN_LOADING_DELAY - (new Date().getTime() - startTime);
-                        timeoutId = setTimeout(() => handleLoadSuccess(data), timeOut)
-                    })
+            clearTimeout(timeoutId)
+            if (xhr) {
+                xhr.abort()
+            }
+            Helpers.getLayoutLoading().classList.add('show')
+            xhr = AjaxHelper.load(into, url, url, 'GET', null, function (response) {
+                const timeOut = Helpers.MIN_LOADING_DELAY - (new Date().getTime() - startTime);
+                timeoutId = setTimeout(() => Helpers.loadHandler.success(into, response), timeOut)
+                xhr = null
+            }, function () {
+                if (xhr && xhr.status > 0) {
+                    Helpers.loadHandler.error(xhr.status)
+                }
+                xhr = null
             })
-    }
+        };
+
+        $(this.getLayoutMenu()).find('.menu-item .menu-link, .app-brand-link')
+            .not('.menu-toggle')
+            .off('click')
+            .on('click', onClickListener)
+        $(this.getLayoutNavbar()).find('.dropdown-menu .dropdown-item')
+            .not('.dropdown-item-logout')
+            .off('click')
+            .on('click', onClickListener)
+    },
+
+    // ---
+    // initWindowPopState
+    initWindowPopState() {
+        let timeoutId
+        let xhr
+        // load if can or reload when state change
+        window.addEventListener("popstate", function (e) {
+            const state = e.state;
+            // console.log(state)
+            if (state !== null) {
+                let url = state.loadUrl,
+                    into = $(state.into),
+                    success = state.success,
+                    type = state.type,
+                    data = state.data
+                const startTime = new Date().getTime()
+
+                // console.log(into)
+                if (into.length === 0) {
+                    // try to find content body
+                    into = $(Helpers.getLayoutContent())
+                    if (into.length === 0) {
+                        window.location.reload()
+                        return;
+                    }
+                    url = state.realUrl
+                }
+                clearTimeout(timeoutId)
+                if (xhr) {
+                    xhr.abort()
+                }
+                Helpers.getLayoutLoading().classList.add('show')
+                xhr = AjaxHelper.load(null, null, url, type, data, function (response) {
+                    const timeOut = Helpers.MIN_LOADING_DELAY - (new Date().getTime() - startTime);
+                    timeoutId = setTimeout(() => Helpers.loadHandler.success(into, response), timeOut)
+                    xhr = null
+
+                    if (typeof success == "string" && typeof window[success] == 'function') {
+                        window[success](response);
+                    }
+                    if (typeof success == "function") {
+                        success(response);
+                    }
+                }, function () {
+                    if (xhr && xhr.status > 0) {
+                        Helpers.loadHandler.error(xhr.status)
+                    }
+                    xhr = null
+                })
+            }
+        })
+    },
 
 }
 

@@ -4,6 +4,7 @@
 <body>
 
 <div th:fragment="index">
+    <div id="dashboard-observer"></div>
     <div class="row">
         <div class="col-lg-8 mb-4 order-0">
             <div class="card">
@@ -550,6 +551,22 @@
         </div>
         <!--/ Transactions -->
     </div>
+
+    <div th:if="${context.ajax}">
+        <script>
+            if (typeof DashBoard === 'undefined') {
+                CommonHelper.loadScripts("/public/admin/assets/vendor/libs/apex-charts/apexcharts.js")
+                CommonHelper.loadScripts("/public/admin/assets/js/dashboards-analytics.js")
+            } else {
+                DashBoard.init()
+            }
+        </script>
+    </div>
+    <div th:if="${!context.ajax}">
+        <script src="/public/admin/assets/vendor/libs/apex-charts/apexcharts.js"></script>
+        <script src="/public/admin/assets/js/dashboards-analytics.js"></script>
+    </div>
+
 </div>
 
 </body>

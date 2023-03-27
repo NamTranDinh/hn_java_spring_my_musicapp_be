@@ -10,14 +10,13 @@
 
     let layoutMenuEl = document.querySelectorAll('#layout-menu');
     layoutMenuEl.forEach(function (element) {
-        let menu = new Menu(element, {
+        Helpers.mainMenu = new Menu(element, {
             orientation: 'vertical',
             closeChildren: false
         });
-        // Change parameter to true if you want scroll animation
-        window.Helpers.scrollToActive(false);
-        window.Helpers.mainMenu = menu;
-        window.Helpers.initMenu(element)
+        Helpers.mainMenu.updateActiveMenu()
+        Helpers.scrollToActive(false); // Change parameter to true if you want scroll animation
+        Helpers.initMenu()
     });
 
     // Initialize menu toggles and bind click on each
@@ -92,6 +91,9 @@
         accordionTriggerEl.addEventListener('show.bs.collapse', accordionActiveFunction);
         accordionTriggerEl.addEventListener('hide.bs.collapse', accordionActiveFunction);
     });
+
+    // init pop state
+    Helpers.initWindowPopState()
 
     // Auto update layout based on screen size
     Helpers.setAutoUpdate(true);

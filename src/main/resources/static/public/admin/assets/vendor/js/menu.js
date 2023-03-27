@@ -1,4 +1,5 @@
 const TRANSITION_EVENTS = ['transitionend', 'webkitTransitionEnd', 'oTransitionEnd']
+
 // const TRANSITION_PROPERTIES = ['transition', 'MozTransition', 'webkitTransition', 'WebkitTransition', 'OTransition']
 
 class Menu {
@@ -8,10 +9,14 @@ class Menu {
         this._accordion = config.accordion !== false
         this._closeChildren = Boolean(config.closeChildren)
 
-        this._onOpen = config.onOpen || (() => {})
-        this._onOpened = config.onOpened || (() => {})
-        this._onClose = config.onClose || (() => {})
-        this._onClosed = config.onClosed || (() => {})
+        this._onOpen = config.onOpen || (() => {
+        })
+        this._onOpened = config.onOpened || (() => {
+        })
+        this._onClose = config.onClose || (() => {
+        })
+        this._onClosed = config.onClosed || (() => {
+        })
 
         this._psScroll = null
         this._topParent = null
@@ -92,7 +97,7 @@ class Menu {
     static childOf(/* child node */ c, /* parent node */ p) {
         // returns boolean
         if (c.parentNode) {
-            while ((c = c.parentNode) && c !== p);
+            while ((c = c.parentNode) && c !== p) ;
             return !!c
         }
         return false
@@ -224,7 +229,8 @@ class Menu {
                     this._onOpened && this._onOpened(this, item, toggleLink, Menu._findMenu(item))
                 }
             })
-            .catch(() => {})
+            .catch(() => {
+            })
     }
 
     close(el, closeChildren = this._closeChildren, _autoClose = false) {
@@ -254,7 +260,8 @@ class Menu {
                     this._onClosed && this._onClosed(this, item, toggleLink, Menu._findMenu(item))
                 }
             })
-            .catch(() => {})
+            .catch(() => {
+            })
     }
 
     _closeOther(item, closeChildren) {
@@ -416,7 +423,7 @@ class Menu {
         TRANSITION_EVENTS.forEach(ev => el.addEventListener(ev, el._menuAnimationEndEventCb, false))
 
         el._menuAnimationEndEventTimeout = setTimeout(() => {
-            cb({ target: el })
+            cb({target: el})
         }, duration + 50)
     }
 
@@ -510,8 +517,32 @@ class Menu {
         }
     }
 
+    updateActiveMenu() {
+        const menu = this;
+        const items = $(menu._el).find('.menu-item');
+        const url = location.pathname
+        let active = function (item) {
+            items.removeClass('active')
+            item.parent().addClass('active')
+            let parent = item.closest('.menu-sub').parent();
+            if (parent.length !== 0) {
+                parent.addClass('active')
+                menu.open(parent[0], true)
+                menu._closeOther(parent[0], true)
+            }
+        }
+
+        items.find(" > .menu-link").not('.menu-toggle').each(function () {
+            let item = $(this)
+            if (url.startsWith(item.attr('href'))) {
+                active(item)
+                return false;
+            }
+        })
+    }
+
     manageScroll() {
-        const { PerfectScrollbar } = window
+        const {PerfectScrollbar} = window
         const menuInner = document.querySelector('.menu-inner')
 
         if (window.innerWidth < Helpers.LAYOUT_BREAKPOINT) {

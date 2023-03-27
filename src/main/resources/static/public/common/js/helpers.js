@@ -136,12 +136,16 @@ const AjaxHelper = {
         if (paramValue == null) {
             paramValue = '';
         }
-        const pattern = new RegExp('\\b(' + paramName + '=).*?(&|#|$)');
+        const pattern = new RegExp('(\\b' + paramName + '=)[^&]*');
         if (url.search(pattern) >= 0) {
-            return url.replace(pattern, '$1' + paramValue + '$2');
+            return url.replace(pattern, '$1' + encodeURIComponent(paramValue));
         }
-        url = url.replace(/[?#]$/, '');
-        return url + (url.indexOf('?') > 0 ? '&' : '?') + paramName + '=' + paramValue;
+        if (url.indexOf('?') === -1) {
+            url += '?';
+        } else {
+            url += '&';
+        }
+        return url + paramName + '=' + encodeURIComponent(paramValue);
     },
 
     _removeUrlParam(url, paramName) {
@@ -181,35 +185,28 @@ const AjaxHelper = {
      * @private
      */
     _load(into, rootPath, url, type, data = null, success = null, error = null) {
-        if (rootPath != null) {
-            let realUrl = rootPath + this._getTailUrl(url)
-            let pushData = {
-                into: into,
-                loadUrl: url,
-                realUrl: realUrl,
-                type: type,
-            }
-            if (typeof success == "string") {
-                pushData.success = success;
-            }
-            if (typeof success == "function" && success.name !== "") {
-                pushData.success = success.name;
-            }
-            if (history.state == null || history.state.realUrl !== realUrl) {
-                history.pushState(pushData, null, realUrl);
-            }
-        }
-        return this._loadUrl(this._replaceUrlParam(url, this.PARAMETER_AJAX, this.VALUE_AJAX), type, data, function (data) {
-            if (into != null) {
-                if (typeof into == 'string') {
-                    $(into).html(data);
+        return this._loadUrl(this._replaceUrlParam(url, this.PARAMETER_AJAX, this.VALUE_AJAX), type, data, function (response) {
+            if (rootPath != null) {
+                let realUrl = rootPath + AjaxHelper._getTailUrl(url)
+                let pushData = {
+                    into: into,
+                    loadUrl: url,
+                    realUrl: realUrl,
+                    type: type,
+                    data: data,
                 }
-                if (typeof into == 'object') {
-                    into.html(data);
+                if (typeof success == "string") {
+                    pushData.success = success;
+                }
+                if (typeof success == "function" && success.name !== "") {
+                    pushData.success = success.name;
+                }
+                if (history.state == null || history.state.realUrl !== realUrl) {
+                    history.pushState(pushData, null, realUrl);
                 }
             }
             if (typeof success == "function") {
-                success(data);
+                success(response);
             }
         }, error);
     },
@@ -225,45 +222,7 @@ const AjaxHelper = {
         return this._adapter_ajax($param);
     },
 
-    load(into, rootPath, url, success = null, error = null) {
-        return this._load(into, rootPath, url, "GET", null, success, error)
+    load(into, rootPath, url, type = "GET", data = null, success = null, error = null) {
+        return this._load(into, rootPath, url, type, data, success, error)
     },
-
-    init() {
-        // load if can or reload when state change
-        $(window).off('popstate').on('popstate', function (e) {
-            const state = e.originalEvent.state;
-            // console.log(state)
-            if (state !== null) {
-                let url = state.loadUrl
-                let into = $(state.into)
-                let callback = state.callback
-                // console.log(into)
-                if (into.length === 0) {
-                    // try to find content body
-                    into = $(Helpers.getLayoutContent())
-                    if (into.length === 0) {
-                        window.location.reload()
-                        return;
-                    }
-                    url = state.realUrl
-                    callback = addActiveClasss
-                }
-                AjaxHelper.load(null, null, url, function (data) {
-                    into.html(data);
-                    if (typeof callback == "string" && typeof window[callback] == 'function') {
-                        window[callback]();
-                    }
-                    if (typeof callback == "function") {
-                        callback();
-                    }
-                }, function () {
-                    window.location.reload()
-                })
-            }
-        });
-    }
 }
-
-// init ajax
-CommonHelper.documentReady(() => AjaxHelper.init())

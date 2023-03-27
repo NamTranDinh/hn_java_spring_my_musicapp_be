@@ -123,7 +123,7 @@ CREATE TABLE `ma_permission` (
 
 LOCK TABLES `ma_permission` WRITE;
 /*!40000 ALTER TABLE `ma_permission` DISABLE KEYS */;
-INSERT INTO `ma_permission` VALUES (1,'Admin permission','Can access all link','/**',0,'2023-03-24 14:10:51',NULL);
+INSERT INTO `ma_permission` VALUES (1,'Admin permission','Can access all link','**',0,'2023-03-24 14:10:51','2023-03-25 11:20:59');
 /*!40000 ALTER TABLE `ma_permission` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -299,7 +299,7 @@ CREATE TABLE `ma_user` (
 
 LOCK TABLES `ma_user` WRITE;
 /*!40000 ALTER TABLE `ma_user` DISABLE KEYS */;
-INSERT INTO `ma_user` VALUES (1,1,'Admin','MCT',1,NULL,NULL,'admin@gmail.com',NULL,'$2a$10$YNpfWneR8sW8BFpfLIy2F.80BS0BsBn/e9COtkjjRRTLiIyy9lKum',NULL,'2023-03-24 14:14:08',NULL);
+INSERT INTO `ma_user` VALUES (1,1,'Admin','MCT',1,NULL,NULL,'admin@gmail.com','admin','$2a$10$zkMwzvYjYqllgpkG4Ac4wuYkDkSV.5jxhAGDvSX4PrOSF5GxxT0B6',0,'2023-03-24 14:14:08','2023-03-25 09:41:48'),(2,1,'Son','Nguyen',1,NULL,NULL,'sona9k15tl@gmail.com','sonnc11','$2a$10$zkMwzvYjYqllgpkG4Ac4wuYkDkSV.5jxhAGDvSX4PrOSF5GxxT0B6',1,'2023-03-25 13:00:24',NULL);
 /*!40000 ALTER TABLE `ma_user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -312,4 +312,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-03-24 21:58:47
+-- Dump completed on 2023-03-28  2:14:54
