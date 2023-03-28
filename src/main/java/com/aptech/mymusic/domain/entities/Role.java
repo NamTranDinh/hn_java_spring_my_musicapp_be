@@ -22,8 +22,6 @@ public class Role {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "authority")
-    private String authority;
 
     @Column(name = "active")
     @Enumerated(EnumType.ORDINAL)
@@ -42,7 +40,6 @@ public class Role {
             name = "ma_role_permission",
             joinColumns = @JoinColumn(name = "role_id"),
             inverseJoinColumns = @JoinColumn(name = "permission_id"))
-    @IgnoreField
     private List<Permission> permissions;
 
     public Role() {
@@ -66,14 +63,6 @@ public class Role {
 
     public String getDescription() {
         return description;
-    }
-
-    public String getAuthority() {
-        return authority;
-    }
-
-    public void setAuthority(String authority) {
-        this.authority = authority;
     }
 
     public void setDescription(String description) {

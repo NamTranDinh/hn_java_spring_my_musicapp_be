@@ -14,6 +14,12 @@ public class SongController extends BaseController {
     @Override
     @RequestMapping
     public ModelAndView index() {
+        try {
+            Thread.sleep(1000);
+            // throw new RuntimeException("");
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         return view(buildContext(Resource.Layout.MasterAdmin)
                 .setTitle("Song")
                 .setContent(Fragment.of("templates/admin/pages/musics/song.html")));

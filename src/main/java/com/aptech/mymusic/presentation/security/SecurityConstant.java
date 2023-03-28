@@ -9,7 +9,7 @@ public class SecurityConstant {
     public static final String LOGIN_FAILURE_PAGE = "/admin/auth/login?error";
     public static final String LOGIN_SUCCESS_PAGE = "/admin/auth/redirect";
 
-    public static final long LOGIN_SESSION_EXP = TimeUnit.MINUTES.toMillis(10);  // 10 minute
+    public static final long LOGIN_SESSION_EXP = TimeUnit.DAYS.toMillis(1);  // 10 minute
     public static final long LOGIN_REMEMBER_ME_EXP = TimeUnit.DAYS.toMillis(14); // 2 week
 
     public static final String[] PUBLIC_URL = new String[]{

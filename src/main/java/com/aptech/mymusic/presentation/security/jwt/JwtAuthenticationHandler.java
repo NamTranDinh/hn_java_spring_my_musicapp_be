@@ -1,6 +1,5 @@
 package com.aptech.mymusic.presentation.security.jwt;
 
-import com.aptech.mymusic.domain.entities.UserDetail;
 import com.aptech.mymusic.presentation.internalmodel.LoginError;
 import com.aptech.mymusic.presentation.security.SecurityConstant;
 import io.jsonwebtoken.JwtException;
@@ -31,13 +30,13 @@ public class JwtAuthenticationHandler implements AuthenticationFailureHandler, A
     @Override
     public void onAuthenticationSuccess(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Authentication authentication) throws IOException {
 
-        UserDetail userDetail = (UserDetail) authentication.getPrincipal();
+        String username = request.getParameter("username");
 
-        String jwtSessionToken = jwtTokenProvider.generateToken(userDetail, SecurityConstant.LOGIN_SESSION_EXP);
+        String jwtSessionToken = jwtTokenProvider.generateToken(username, SecurityConstant.LOGIN_SESSION_EXP);
         jwtCookiesManager.setLoginSessionToken(response, jwtSessionToken, SecurityConstant.LOGIN_SESSION_EXP);
 
         if (request.getParameter("remember-me") != null) {
-            String jwtRememberMeToken = jwtTokenProvider.generateToken(userDetail, SecurityConstant.LOGIN_REMEMBER_ME_EXP);
+            String jwtRememberMeToken = jwtTokenProvider.generateToken(username, SecurityConstant.LOGIN_REMEMBER_ME_EXP);
             jwtCookiesManager.setRememberMeToken(response, jwtRememberMeToken, SecurityConstant.LOGIN_REMEMBER_ME_EXP);
         } else {
             jwtCookiesManager.clearRememberMeToken(response);

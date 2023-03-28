@@ -109,11 +109,13 @@ CREATE TABLE `ma_permission` (
   `id` int NOT NULL,
   `title` varchar(100) DEFAULT NULL,
   `description` varchar(100) DEFAULT NULL,
-  `slug` varchar(50) DEFAULT NULL,
-  `active` tinyint(1) DEFAULT NULL,
+  `authority` varchar(36) DEFAULT NULL,
+  `slug` varchar(100) DEFAULT NULL,
+  `active` tinyint(1) DEFAULT '0',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ma_permission_authority_uindex` (`authority`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -123,7 +125,7 @@ CREATE TABLE `ma_permission` (
 
 LOCK TABLES `ma_permission` WRITE;
 /*!40000 ALTER TABLE `ma_permission` DISABLE KEYS */;
-INSERT INTO `ma_permission` VALUES (1,'Admin permission','Can access all link','**',0,'2023-03-24 14:10:51','2023-03-25 11:20:59');
+INSERT INTO `ma_permission` VALUES (1,'Admin','Can access to admin','cdf8ae23-f6ec-4339-b1a7-c4749e89263a','/admin/**',0,'2023-03-24 14:10:51','2023-03-28 16:45:58'),(2,'Dashboard','Can access to dashboard','22e1151e-bc20-4754-a120-e97cb13c5012','/admin/dashboard/**',0,'2023-03-24 14:10:51','2023-03-28 20:17:36'),(3,'Musics','Can access to music','25f348bc-6ab4-423a-a09e-1981263014a0','/admin/musics/**',0,'2023-03-24 14:10:51','2023-03-25 11:20:59');
 /*!40000 ALTER TABLE `ma_permission` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -164,12 +166,10 @@ CREATE TABLE `ma_role` (
   `id` int NOT NULL,
   `title` varchar(100) DEFAULT NULL,
   `description` varchar(100) DEFAULT NULL,
-  `authority` varchar(50) DEFAULT NULL,
-  `active` tinyint(1) DEFAULT NULL,
+  `active` tinyint(1) DEFAULT '0',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `ma_role_authority_unique` (`authority`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -179,7 +179,7 @@ CREATE TABLE `ma_role` (
 
 LOCK TABLES `ma_role` WRITE;
 /*!40000 ALTER TABLE `ma_role` DISABLE KEYS */;
-INSERT INTO `ma_role` VALUES (1,'Admin','Admin','Admin',0,'2023-03-24 14:11:53',NULL);
+INSERT INTO `ma_role` VALUES (1,'Admin','Admin',0,'2023-03-24 14:11:53',NULL),(2,'Staff','Staff',0,'2023-03-28 16:00:07',NULL);
 /*!40000 ALTER TABLE `ma_role` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -205,7 +205,7 @@ CREATE TABLE `ma_role_permission` (
 
 LOCK TABLES `ma_role_permission` WRITE;
 /*!40000 ALTER TABLE `ma_role_permission` DISABLE KEYS */;
-INSERT INTO `ma_role_permission` VALUES (1,1,'2023-03-24 14:12:05',NULL);
+INSERT INTO `ma_role_permission` VALUES (1,1,'2023-03-24 14:12:05',NULL),(1,2,'2023-03-28 16:00:31','2023-03-28 20:13:54'),(1,3,'2023-03-28 16:04:19','2023-03-28 20:13:54'),(2,2,'2023-03-28 16:00:31',NULL),(2,3,'2023-03-28 16:04:19',NULL);
 /*!40000 ALTER TABLE `ma_role_permission` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -278,13 +278,13 @@ CREATE TABLE `ma_user` (
   `role_id` int NOT NULL,
   `firstname` varchar(50) DEFAULT NULL,
   `lastname` varchar(50) DEFAULT NULL,
-  `gender` tinyint(1) DEFAULT NULL,
+  `gender` tinyint(1) DEFAULT '0',
   `avatar` varchar(50) DEFAULT NULL,
   `phone` varchar(20) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
   `username` varchar(50) DEFAULT NULL,
   `password` varchar(60) DEFAULT NULL,
-  `status` tinyint(1) DEFAULT NULL,
+  `status` tinyint(1) DEFAULT '0',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -299,7 +299,7 @@ CREATE TABLE `ma_user` (
 
 LOCK TABLES `ma_user` WRITE;
 /*!40000 ALTER TABLE `ma_user` DISABLE KEYS */;
-INSERT INTO `ma_user` VALUES (1,1,'Admin','MCT',1,NULL,NULL,'admin@gmail.com','admin','$2a$10$zkMwzvYjYqllgpkG4Ac4wuYkDkSV.5jxhAGDvSX4PrOSF5GxxT0B6',0,'2023-03-24 14:14:08','2023-03-25 09:41:48'),(2,1,'Son','Nguyen',1,NULL,NULL,'sona9k15tl@gmail.com','sonnc11','$2a$10$zkMwzvYjYqllgpkG4Ac4wuYkDkSV.5jxhAGDvSX4PrOSF5GxxT0B6',1,'2023-03-25 13:00:24',NULL);
+INSERT INTO `ma_user` VALUES (1,1,'Admin','MCT',1,NULL,NULL,'admin@gmail.com','admin','$2a$10$zkMwzvYjYqllgpkG4Ac4wuYkDkSV.5jxhAGDvSX4PrOSF5GxxT0B6',0,'2023-03-24 14:14:08','2023-03-25 09:41:48'),(2,2,'Son','Nguyen',1,NULL,NULL,'sona9k15tl@gmail.com','sonnc11','$2a$10$zkMwzvYjYqllgpkG4Ac4wuYkDkSV.5jxhAGDvSX4PrOSF5GxxT0B6',0,'2023-03-25 13:00:24','2023-03-28 16:02:00');
 /*!40000 ALTER TABLE `ma_user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -312,4 +312,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-03-28  2:14:54
+-- Dump completed on 2023-03-29  3:19:24

@@ -1,5 +1,7 @@
 package com.aptech.mymusic.domain.entities;
 
+import com.aptech.mymusic.utils.annotation.IgnoreField;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -18,6 +20,9 @@ public class Permission {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "authority")
+    private String authority;
+
     @Column(name = "slug")
     private String slug;
 
@@ -26,9 +31,11 @@ public class Permission {
     private Enums.Status status;
 
     @Column(name = "created_at")
+    @IgnoreField
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
+    @IgnoreField
     private LocalDateTime updatedAt;
 
     public Permission() {
@@ -56,6 +63,14 @@ public class Permission {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getAuthority() {
+        return authority;
+    }
+
+    public void setAuthority(String authority) {
+        this.authority = authority;
     }
 
     public String getSlug() {

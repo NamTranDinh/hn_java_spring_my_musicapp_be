@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 public class UserDetail implements UserDetails {
     private final User user;
@@ -16,7 +17,13 @@ public class UserDetail implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority(user.getRole().getAuthority()));
+        if (user.getRole().getPermissions() == null) {
+            return Collections.emptyList();
+        }
+        return user.getRole().getPermissions().stream()
+                .filter(p -> p.getStatus() == Enums.Status.ACTIVE)
+                .map(p -> new SimpleGrantedAuthority(p.getAuthority()))
+                .collect(Collectors.toList());
     }
 
     @Override

@@ -7,6 +7,6 @@ public abstract class Enums {
     }
 
     public enum Gender {
-        UNSET, MALE, FEMALE
+        MALE, FEMALE, UNSET,
     }
 }
