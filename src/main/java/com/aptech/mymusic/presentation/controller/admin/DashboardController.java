@@ -15,7 +15,7 @@ public class DashboardController extends BaseController {
     @Override
     @RequestMapping
     public ModelAndView index() {
-        return home();
+        return new ModelAndView("redirect:/admin/dashboard");
     }
 
     @GetMapping("/dashboard")

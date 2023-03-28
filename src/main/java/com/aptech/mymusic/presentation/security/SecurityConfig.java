@@ -5,11 +5,17 @@ import com.aptech.mymusic.domain.entities.Permission;
 import com.aptech.mymusic.domain.entities.Role;
 import com.aptech.mymusic.domain.repository.RoleRepository;
 import com.aptech.mymusic.presentation.security.jwt.*;
+import com.aptech.mymusic.presentation.security.voter.AuthenticatedRoleVoter;
 import com.aptech.mymusic.presentation.service.UserDetailService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.access.AccessDecisionManager;
+import org.springframework.security.access.AccessDecisionVoter;
+import org.springframework.security.access.vote.AffirmativeBased;
+import org.springframework.security.access.vote.AuthenticatedVoter;
+import org.springframework.security.access.vote.RoleVoter;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -17,10 +23,13 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.expression.WebExpressionVoter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Configuration
 @EnableWebSecurity
@@ -61,10 +70,22 @@ public class SecurityConfig {
     }
 
     @Bean
+    public AccessDecisionManager accessDecisionManager() {
+        List<AccessDecisionVoter<?>> decisionVoters = Arrays.asList(
+                new AuthenticatedRoleVoter(),
+                new WebExpressionVoter(),
+                new RoleVoter(),
+                new AuthenticatedVoter()
+        );
+        return new AffirmativeBased(decisionVoters);
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(@NotNull HttpSecurity http) throws Exception {
 
         // permit all public url
         http.authorizeRequests(req -> req
+                .accessDecisionManager(accessDecisionManager())
                 .antMatchers(SecurityConstant.PUBLIC_URL).permitAll()
                 .antMatchers(HttpMethod.GET, SecurityConstant.PUBLIC_GET_URL).permitAll());
 
@@ -100,7 +121,7 @@ public class SecurityConfig {
             if (role.getStatus() == Enums.Status.INACTIVE) {
                 continue;
             }
-            List<String> permissionList = new ArrayList<>();
+            Set<String> permissionList = new HashSet<>();
             for (Permission permission : role.getPermissions()) {
                 if (permission.getStatus() == Enums.Status.INACTIVE) {
                     continue;
@@ -111,6 +132,7 @@ public class SecurityConfig {
             http.authorizeRequests()
                     .antMatchers(authorities)
                     .hasAuthority(role.getAuthority());
+            System.out.println(role.getTitle() + " -> " + role.getAuthority() + ": " + Arrays.toString(authorities));
         }
         return http;
     }

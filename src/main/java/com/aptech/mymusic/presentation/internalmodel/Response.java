@@ -1,5 +1,6 @@
 package com.aptech.mymusic.presentation.internalmodel;
 
+import com.aptech.mymusic.utils.JsonHelper;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 
@@ -44,6 +45,10 @@ public class Response {
 
     public Map<String, Object> body() {
         return data;
+    }
+
+    public String json(){
+        return JsonHelper.objToJson(data);
     }
 
 }

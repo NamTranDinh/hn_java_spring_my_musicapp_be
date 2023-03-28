@@ -4,8 +4,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 public class UserDetail implements UserDetails {
     private final User user;
@@ -16,9 +16,7 @@ public class UserDetail implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return new ArrayList<GrantedAuthority>() {{
-            add(new SimpleGrantedAuthority(user.getRole().getAuthority()));
-        }};
+        return Collections.singleton(new SimpleGrantedAuthority(user.getRole().getAuthority()));
     }
 
     @Override
