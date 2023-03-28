@@ -225,4 +225,8 @@ const AjaxHelper = {
     load(into, rootPath, url, type = "GET", data = null, success = null, error = null) {
         return this._load(into, rootPath, url, type, data, success, error)
     },
+
+    loadUrl(url, type, data = null, success = null, error = null) {
+        return this._loadUrl(url, type, data, success, error)
+    }
 }

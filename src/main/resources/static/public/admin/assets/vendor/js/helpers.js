@@ -891,48 +891,48 @@ const Helpers = {
         // load if can or reload when state change
         window.addEventListener("popstate", function (e) {
             const state = e.state;
-            // console.log(state)
-            if (state !== null) {
-                let url = state.loadUrl,
-                    into = $(state.into),
-                    success = state.success,
-                    type = state.type,
-                    data = state.data
-                const startTime = new Date().getTime()
-
-                // console.log(into)
-                if (into.length === 0) {
-                    // try to find content body
-                    into = $(Helpers.getLayoutContent())
-                    if (into.length === 0) {
-                        window.location.reload()
-                        return;
-                    }
-                    url = state.realUrl
-                }
-                clearTimeout(timeoutId)
-                if (xhr) {
-                    xhr.abort()
-                }
-                Helpers.getLayoutLoading().classList.add('show')
-                xhr = AjaxHelper.load(null, null, url, type, data, function (response) {
-                    const timeOut = Helpers.MIN_LOADING_DELAY - (new Date().getTime() - startTime);
-                    timeoutId = setTimeout(() => Helpers.loadHandler.success(into, response), timeOut)
-                    xhr = null
-
-                    if (typeof success == "string" && typeof window[success] == 'function') {
-                        window[success](response);
-                    }
-                    if (typeof success == "function") {
-                        success(response);
-                    }
-                }, function () {
-                    if (xhr && xhr.status > 0) {
-                        Helpers.loadHandler.error(xhr.status)
-                    }
-                    xhr = null
-                })
+            if(state === null){
+                window.location.reload()
+                return;
             }
+            // console.log(state)
+            let url = state.loadUrl,
+                into = $(state.into),
+                success = state.success,
+                type = state.type,
+                data = state.data
+            const startTime = new Date().getTime()
+            if (into.length === 0) {
+                // try to find content body
+                into = $(Helpers.getLayoutContent())
+                if (into.length === 0) {
+                    window.location.reload()
+                    return;
+                }
+                url = state.realUrl
+            }
+            clearTimeout(timeoutId)
+            if (xhr) {
+                xhr.abort()
+            }
+            Helpers.getLayoutLoading().classList.add('show')
+            xhr = AjaxHelper.load(null, null, url, type, data, function (response) {
+                const timeOut = Helpers.MIN_LOADING_DELAY - (new Date().getTime() - startTime);
+                timeoutId = setTimeout(() => Helpers.loadHandler.success(into, response), timeOut)
+                xhr = null
+
+                if (typeof success == "string" && typeof window[success] == 'function') {
+                    window[success](response);
+                }
+                if (typeof success == "function") {
+                    success(response);
+                }
+            }, function () {
+                if (xhr && xhr.status > 0) {
+                    Helpers.loadHandler.error(xhr.status)
+                }
+                xhr = null
+            })
         })
     },
 
