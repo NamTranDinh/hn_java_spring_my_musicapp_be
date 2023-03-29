@@ -32,20 +32,15 @@ public class CustomWebExpressionVoter extends WebExpressionVoter {
             return result;
         }
 
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        String url = validateUrl(filterInvocation.getRequestUrl());
+        Collection<? extends GrantedAuthority> authorities = getAuthorities(authentication);
 
-        if (authentication.getPrincipal() instanceof UserDetails) {
-            String username = ((UserDetails) authentication.getPrincipal()).getUsername();
-            UserDetails userDetails = userDetailService.loadUserByUsername(username);
-            authorities = userDetails.getAuthorities();
-        }
-
-        log("--- Voter url:  " + filterInvocation.getRequestUrl());
+        log("--- Voter url:  " + url);
         log("--- Authorities " + authorities);
 
         for (GrantedAuthority authority : authorities) {
             PermissionMatcher matcher = new PermissionMatcher(authority.getAuthority());
-            if (matcher.matches(filterInvocation.getRequestUrl())) {
+            if (matcher.matches(url)) {
                 log("--> Granted");
                 return ACCESS_GRANTED;
             }
@@ -53,6 +48,30 @@ public class CustomWebExpressionVoter extends WebExpressionVoter {
         log("--> Denied");
         return result;
     }
+
+    @NotNull
+    private String validateUrl(@NotNull String url) {
+        if (url.endsWith("/") || url.endsWith("?")) {
+            return url.substring(0, url.length() - 1);
+        }
+        return url;
+    }
+
+    private Collection<? extends GrantedAuthority> getAuthorities(@NotNull Authentication authentication) {
+
+        Collection<? extends GrantedAuthority> authorities;
+
+        if (authentication.getPrincipal() instanceof UserDetails) {
+            String username = ((UserDetails) authentication.getPrincipal()).getUsername();
+            UserDetails userDetails = userDetailService.loadUserByUsername(username);
+            authorities = userDetails.getAuthorities();
+        } else {
+            authorities = authentication.getAuthorities();
+        }
+
+        return authorities;
+    }
+
 
     private static void log(Object object) {
         if (debug) logger.info(object);
