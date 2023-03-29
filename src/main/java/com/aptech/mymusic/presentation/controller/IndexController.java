@@ -6,11 +6,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-@RequestMapping("/")
+@RequestMapping
 public class IndexController extends BaseController {
 
     @Override
-    @RequestMapping
+    @RequestMapping("/")
     public ModelAndView index() {
         return new ModelAndView("redirect:/public");
     }

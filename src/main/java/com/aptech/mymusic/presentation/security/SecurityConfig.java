@@ -4,6 +4,7 @@ import com.aptech.mymusic.domain.entities.Enums;
 import com.aptech.mymusic.domain.entities.Permission;
 import com.aptech.mymusic.domain.repository.PermissionRepository;
 import com.aptech.mymusic.presentation.security.jwt.*;
+import com.aptech.mymusic.presentation.security.voter.CustomWebExpressionVoter;
 import com.aptech.mymusic.presentation.service.UserDetailService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.ApplicationContext;
@@ -11,6 +12,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.access.AccessDecisionManager;
+import org.springframework.security.access.AccessDecisionVoter;
+import org.springframework.security.access.vote.AuthenticatedVoter;
+import org.springframework.security.access.vote.RoleVoter;
+import org.springframework.security.access.vote.UnanimousBased;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -23,6 +29,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -85,12 +92,22 @@ public class SecurityConfig {
     }
 
     @Bean
+    public AccessDecisionManager accessDecisionManager() {
+        List<AccessDecisionVoter<?>> decisionVoters = Arrays.asList(
+                new CustomWebExpressionVoter(),
+                new RoleVoter(),
+                new AuthenticatedVoter());
+        return new UnanimousBased(decisionVoters);
+    }
+
+    @Bean
     @Scope("prototype")
     public SecurityFilterChain securityFilterChain(@NotNull HttpSecurity http) throws Exception {
         System.out.println("Security filter chain " + http);
 
         // permit all public url
         http.authorizeRequests(req -> req
+                .accessDecisionManager(accessDecisionManager())
                 .antMatchers(SecurityConstant.PUBLIC_URL).permitAll()
                 .antMatchers(HttpMethod.GET, SecurityConstant.PUBLIC_GET_URL).permitAll());
 
