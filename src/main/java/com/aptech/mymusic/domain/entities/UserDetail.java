@@ -22,7 +22,7 @@ public class UserDetail implements UserDetails {
         }
         return user.getRole().getPermissions().stream()
                 .filter(p -> p.getStatus() == Enums.Status.ACTIVE)
-                .map(p -> new SimpleGrantedAuthority(p.getAuthority()))
+                .map(p -> new SimpleGrantedAuthority(p.getSlug()))
                 .collect(Collectors.toList());
     }
 
