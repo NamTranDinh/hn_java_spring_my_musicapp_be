@@ -1,6 +1,6 @@
-package com.aptech.mymusic.presentation.controller.pub;
+package com.aptech.mymusic.presentation.controller.page;
 
-import com.aptech.mymusic.presentation.controller.base.BaseController;
+import com.aptech.mymusic.presentation.controller.BaseController;
 import com.aptech.mymusic.presentation.internalmodel.Fragment;
 import com.aptech.mymusic.presentation.internalmodel.Resource;
 import org.springframework.stereotype.Controller;
@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-@RequestMapping("/public")
-public class PublicHomeController extends BaseController {
+@RequestMapping("/page")
+public class HomeController extends BaseController {
 
     @Override
     @RequestMapping

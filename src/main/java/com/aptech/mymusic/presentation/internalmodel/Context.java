@@ -6,6 +6,7 @@ public class Context {
     private static final String TITLE_PREFIX = "AzMedia: ";
     private String layout;
     private Fragment content;
+    private String prefix = TITLE_PREFIX;
     private String title;
     private String icon;
     private boolean ajax;
@@ -41,12 +42,21 @@ public class Context {
         return this;
     }
 
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public Context setPrefix(String prefix) {
+        this.prefix = prefix == null ? "" : prefix;
+        return this;
+    }
+
     public String getTitle() {
         return title;
     }
 
     public String getTitleWithPrefix() {
-        return TITLE_PREFIX + title;
+        return prefix + title;
     }
 
     public Context setTitle(String title) {

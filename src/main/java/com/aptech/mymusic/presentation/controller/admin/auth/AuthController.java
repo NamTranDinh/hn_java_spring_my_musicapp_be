@@ -1,6 +1,6 @@
 package com.aptech.mymusic.presentation.controller.admin.auth;
 
-import com.aptech.mymusic.presentation.controller.base.BaseController;
+import com.aptech.mymusic.presentation.controller.BaseController;
 import com.aptech.mymusic.presentation.internalmodel.Fragment;
 import com.aptech.mymusic.presentation.internalmodel.LoginError;
 import com.aptech.mymusic.presentation.internalmodel.Resource;

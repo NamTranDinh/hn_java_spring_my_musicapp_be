@@ -125,7 +125,7 @@ CREATE TABLE `ma_permission` (
 
 LOCK TABLES `ma_permission` WRITE;
 /*!40000 ALTER TABLE `ma_permission` DISABLE KEYS */;
-INSERT INTO `ma_permission` VALUES (1,'Admin','Can access to admin','cdf8ae23-f6ec-4339-b1a7-c4749e89263a','/admin/**',0,'2023-03-24 14:10:51','2023-03-28 16:45:58'),(2,'Dashboard','Can access to dashboard','22e1151e-bc20-4754-a120-e97cb13c5012','/admin/dashboard/**',0,'2023-03-24 14:10:51','2023-03-28 20:17:36'),(3,'Musics','Can access to music','25f348bc-6ab4-423a-a09e-1981263014a0','/admin/musics/**',0,'2023-03-24 14:10:51','2023-03-25 11:20:59');
+INSERT INTO `ma_permission` VALUES (1,'Admin','Can access to admin','cdf8ae23-f6ec-4339-b1a7-c4749e89263a','/admin/**',0,'2023-03-24 14:10:51','2023-03-29 13:41:41'),(2,'Admin root','Can access to dashboard','22e1151e-bc20-47d4-a120-e97cb13c5012','/admin',0,'2023-03-24 14:10:51','2023-03-29 17:53:46'),(3,'Dashboard','Can access to dashboard','22e1151e-bc20-4754-a120-e97cb13c5012','/admin/dashboard/**',0,'2023-03-24 14:10:51','2023-03-29 13:41:41'),(4,'Musics','Can access to music','25f348bc-6ab4-423a-a09e-1981263014a0','/admin/musics/**',0,'2023-03-24 14:10:51','2023-03-29 13:39:24');
 /*!40000 ALTER TABLE `ma_permission` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -205,7 +205,7 @@ CREATE TABLE `ma_role_permission` (
 
 LOCK TABLES `ma_role_permission` WRITE;
 /*!40000 ALTER TABLE `ma_role_permission` DISABLE KEYS */;
-INSERT INTO `ma_role_permission` VALUES (1,1,'2023-03-24 14:12:05',NULL),(1,2,'2023-03-28 16:00:31','2023-03-28 20:13:54'),(1,3,'2023-03-28 16:04:19','2023-03-28 20:13:54'),(2,2,'2023-03-28 16:00:31',NULL),(2,3,'2023-03-28 16:04:19',NULL);
+INSERT INTO `ma_role_permission` VALUES (1,1,'2023-03-24 14:12:05',NULL),(2,2,'2023-03-28 16:00:31',NULL),(2,3,'2023-03-28 16:04:19',NULL),(2,4,'2023-03-29 17:53:58',NULL);
 /*!40000 ALTER TABLE `ma_role_permission` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -312,4 +312,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-03-29  3:19:24
+-- Dump completed on 2023-03-30  1:02:41

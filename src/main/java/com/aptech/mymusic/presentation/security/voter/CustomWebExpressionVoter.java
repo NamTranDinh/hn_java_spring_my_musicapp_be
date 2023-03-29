@@ -41,7 +41,7 @@ public class CustomWebExpressionVoter extends WebExpressionVoter {
         }
 
         log("--- Voter url:  " + filterInvocation.getRequestUrl());
-        log("--- Authorities " + authentication.getAuthorities());
+        log("--- Authorities " + authorities);
 
         for (GrantedAuthority authority : authorities) {
             PermissionMatcher matcher = new PermissionMatcher(authority.getAuthority());

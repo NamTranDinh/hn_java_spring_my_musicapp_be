@@ -1,4 +1,4 @@
-package com.aptech.mymusic.presentation.controller.base;
+package com.aptech.mymusic.presentation.controller;
 
 import com.aptech.mymusic.presentation.internalmodel.Context;
 import com.aptech.mymusic.presentation.internalmodel.Resource;

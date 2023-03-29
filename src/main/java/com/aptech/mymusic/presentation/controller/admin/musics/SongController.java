@@ -1,6 +1,6 @@
 package com.aptech.mymusic.presentation.controller.admin.musics;
 
-import com.aptech.mymusic.presentation.controller.base.BaseController;
+import com.aptech.mymusic.presentation.controller.BaseController;
 import com.aptech.mymusic.presentation.internalmodel.Fragment;
 import com.aptech.mymusic.presentation.internalmodel.Resource;
 import org.springframework.stereotype.Controller;
@@ -14,12 +14,6 @@ public class SongController extends BaseController {
     @Override
     @RequestMapping
     public ModelAndView index() {
-        try {
-            Thread.sleep(1000);
-            // throw new RuntimeException("");
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
         return view(buildContext(Resource.Layout.MasterAdmin)
                 .setTitle("Song")
                 .setContent(Fragment.of("templates/admin/pages/musics/song.html")));

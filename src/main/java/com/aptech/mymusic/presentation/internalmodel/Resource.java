@@ -116,7 +116,7 @@ public class Resource {
     }
 
     public enum Icon {
-        AppLogo("static/public/admin/assets/img/favicon/favicon.ico");
+        AppLogo("static/public/admin/assets/img/favicon/favicon.png");
         private final String name;
 
         Icon(@NotNull String name) {

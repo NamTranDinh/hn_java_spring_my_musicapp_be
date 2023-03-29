@@ -1,6 +1,5 @@
 package com.aptech.mymusic.presentation.security.jwt;
 
-import com.aptech.mymusic.presentation.internalmodel.Response;
 import com.aptech.mymusic.presentation.security.SecurityConstant;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -28,9 +27,8 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     public void commence(HttpServletRequest request, @NotNull HttpServletResponse response,
                          @NotNull AuthenticationException authException) throws IOException {
         if (jwtCookiesManager.getLoginSessionToken(request) != null) {
-            response.setContentType("application/json");
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            response.getWriter().write(Response.error(HttpStatus.FORBIDDEN, authException.getMessage()).json());
+            LOGGER.warn("Forbidden: {}", authException.getMessage());
+            response.sendError(HttpStatus.FORBIDDEN.value());
             return;
         }
         LOGGER.warn("Unauthorized error: {}", authException.getMessage());
