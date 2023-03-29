@@ -4,7 +4,6 @@ import com.aptech.mymusic.presentation.controller.base.BaseController;
 import com.aptech.mymusic.presentation.internalmodel.Fragment;
 import com.aptech.mymusic.presentation.internalmodel.Resource;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -18,7 +17,7 @@ public class DashboardController extends BaseController {
         return new ModelAndView("redirect:/admin/dashboard");
     }
 
-    @GetMapping("/dashboard")
+    @RequestMapping("/dashboard")
     public ModelAndView home() {
         return view(buildContext(Resource.Layout.MasterAdmin)
                 .setTitle("Dashboard")

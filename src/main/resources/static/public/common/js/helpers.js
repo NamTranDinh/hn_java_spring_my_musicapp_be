@@ -185,7 +185,7 @@ const AjaxHelper = {
      * @private
      */
     _load(into, rootPath, url, type, data = null, success = null, error = null) {
-        return this._loadUrl(this._replaceUrlParam(url, this.PARAMETER_AJAX, this.VALUE_AJAX), type, data, function (response) {
+        return this._loadUrl(url, type, data, function (response) {
             if (rootPath != null) {
                 let realUrl = rootPath + AjaxHelper._getTailUrl(url)
                 let pushData = {

@@ -861,7 +861,7 @@ const Helpers = {
                 xhr.abort()
             }
             Helpers.getLayoutLoading().classList.add('show')
-            xhr = AjaxHelper.load(into, url, url, 'GET', null, function (response) {
+            xhr = AjaxHelper.load(into, url, url, 'POST', {ajax: true}, function (response) {
                 const timeOut = Helpers.MIN_LOADING_DELAY - (new Date().getTime() - startTime);
                 timeoutId = setTimeout(() => Helpers.loadHandler.success(into, response), timeOut)
                 xhr = null
@@ -891,7 +891,7 @@ const Helpers = {
         // load if can or reload when state change
         window.addEventListener("popstate", function (e) {
             const state = e.state;
-            if(state === null){
+            if (state === null) {
                 window.location.reload()
                 return;
             }
