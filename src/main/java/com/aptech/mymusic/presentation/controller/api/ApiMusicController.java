@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -102,22 +103,21 @@ public class ApiMusicController {
      */
     @PostMapping("/get_suggest_song")
     public List<Song> getSuggestSong(@RequestParam(name = "id") Long id,
-                                     @RequestParam(name = "current_song_ids") String currentSongIds,
+                                     @RequestParam(name = "current_song_ids", required = false) String currentSongIds,
                                      @RequestParam(name = "limit", required = false) Integer limit) {
         if (id == null) return Collections.emptyList();
 
-        List<Long> listIds;
+        Set<Long> listIds;
         try {
-            listIds = JsonHelper.jsonToList(currentSongIds, Long.class);
+            listIds = JsonHelper.jsonToSet(currentSongIds, Long.class);
+            if (listIds.isEmpty()) {
+                listIds.add(id);
+            }
         } catch (Throwable t) {
-            listIds = Collections.emptyList();
+            listIds = Collections.singleton(id);
         }
         return service.getSuggestSong(id, listIds, limit == null || limit < 0 ? 10 : limit);
     }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // SEARCH SONGS
-    ///////////////////////////////////////////////////////////////////////////
 
     @PostMapping("/search_song")
     public List<Song> searchSongByName(@RequestParam(name = "name") String nameSong) {

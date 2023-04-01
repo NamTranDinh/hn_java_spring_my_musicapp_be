@@ -13,9 +13,10 @@ public class SecurityConstant {
     public static final long LOGIN_REMEMBER_ME_EXP = TimeUnit.DAYS.toMillis(14); // 2 week
 
     public static final String[] PUBLIC_URL = new String[]{
-            "/admin/auth/**",
-            "/page/**",
+            "/",
             "/api/**",
+            "/page/**",
+            "/admin/auth/**",
             "/public/**",
             "/images/**",
             "/raw/**",

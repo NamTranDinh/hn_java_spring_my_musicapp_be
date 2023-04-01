@@ -20,7 +20,7 @@ public class IndexController extends BaseController implements ErrorController {
     @Override
     @RequestMapping("/")
     public ModelAndView index() {
-        return new ModelAndView("redirect:/public");
+        return new ModelAndView("redirect:/page");
     }
 
     @RequestMapping("${server.error.path}")

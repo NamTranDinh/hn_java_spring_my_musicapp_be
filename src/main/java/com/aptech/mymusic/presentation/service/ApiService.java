@@ -9,10 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -59,7 +56,7 @@ public class ApiService {
                 .getResultList();
     }
 
-    public List<Song> getSuggestSong(Long id, List<Long> listIds, int limit) {
+    public List<Song> getSuggestSong(Long id, Collection<Long> listIds, int limit) {
         Song song = getSongRepository().findById(id).orElse(null);
         if (song == null) {
             return Collections.emptyList();
