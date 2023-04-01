@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ResourceConfig {
 
-    private final Resource.Type systemResourceType = Resource.Type.LOCAL;
+    public static final Resource.Type SYSTEM_RESOURCE_TYPE = Resource.Type.LOCAL;
 
     @Value("${cloud.local.resource.path}")
     private String localResourcePath;
@@ -33,10 +33,6 @@ public class ResourceConfig {
     ///////////////////////////////////////////////////////////////////////////
     // Getter
     ///////////////////////////////////////////////////////////////////////////
-
-    public Resource.Type getSystemResourceType() {
-        return systemResourceType;
-    }
 
     public String getLocalResourcePath() {
         return localResourcePath;

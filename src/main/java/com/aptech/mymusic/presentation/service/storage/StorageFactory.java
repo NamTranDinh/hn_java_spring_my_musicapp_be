@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 public class StorageFactory {
 
     public static StorageService createStorageService() {
-        return createStorageService(ResourceConfig.getInstance().getSystemResourceType());
+        return createStorageService(ResourceConfig.SYSTEM_RESOURCE_TYPE);
     }
 
     @Nullable

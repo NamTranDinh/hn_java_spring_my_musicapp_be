@@ -29,7 +29,7 @@ public class ResourceController {
     }
 
     /**
-     * Upload a file. Depend on {@link ResourceConfig#getSystemResourceType()}
+     * Upload a file. Depend on {@link ResourceConfig#SYSTEM_RESOURCE_TYPE}
      *
      * @param file a file part
      * @param type type of Path {@link Resource.Path#ordinal() }
@@ -70,7 +70,7 @@ public class ResourceController {
     }
 
     /**
-     * Delete a file. Depend on {@link ResourceConfig#getSystemResourceType()}
+     * Delete a file. Depend on {@link ResourceConfig#SYSTEM_RESOURCE_TYPE}
      *
      * @param type type of Path {@link Resource.Path#ordinal() }
      * @param name name of File
@@ -100,7 +100,7 @@ public class ResourceController {
     }
 
     /**
-     * Get url to access file. Depend on {@link ResourceConfig#getSystemResourceType()}
+     * Get url to access file. Depend on {@link ResourceConfig#SYSTEM_RESOURCE_TYPE}
      *
      * @param type type of Path {@link Resource.Path#ordinal() }
      * @param name name of File

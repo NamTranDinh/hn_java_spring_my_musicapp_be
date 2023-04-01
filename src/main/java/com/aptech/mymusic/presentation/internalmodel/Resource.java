@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 
 public class Resource {
     public static String getUrl(Path path, String name) {
-        return getUrl(ResourceConfig.getInstance().getSystemResourceType(), path, name);
+        return getUrl(ResourceConfig.SYSTEM_RESOURCE_TYPE, path, name);
     }
 
     @Nullable
