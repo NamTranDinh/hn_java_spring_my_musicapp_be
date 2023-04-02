@@ -15,7 +15,6 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.Date;
 
 public class AmazonStorageService extends StorageService {
@@ -54,11 +53,9 @@ public class AmazonStorageService extends StorageService {
 
     @Nullable
     public static String getUrl(@NotNull Resource.Path path, String name) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        calendar.add(Calendar.MILLISECOND, Resource.URL_EXP);
+        Date exp = new Date(System.currentTimeMillis() + Resource.URL_EXP);
         return getAmazonS3()
-                .generatePresignedUrl(ResourceConfig.getInstance().getAwsBucketName(), keyOf(path, name), calendar.getTime())
+                .generatePresignedUrl(ResourceConfig.getInstance().getAwsBucketName(), keyOf(path, name), exp)
                 .toString();
     }
 
