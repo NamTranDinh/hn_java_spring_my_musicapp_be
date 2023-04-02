@@ -106,17 +106,19 @@ DROP TABLE IF EXISTS `ma_permission`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ma_permission` (
-  `id` int NOT NULL,
-  `title` varchar(100) DEFAULT NULL,
-  `description` varchar(100) DEFAULT NULL,
-  `authority` varchar(36) DEFAULT NULL,
-  `slug` varchar(100) DEFAULT NULL,
-  `active` tinyint(1) DEFAULT '0',
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `ma_permission_authority_uindex` (`authority`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+                                 `id` int NOT NULL,
+                                 `title` varchar(100) DEFAULT NULL,
+                                 `description` varchar(100) DEFAULT NULL,
+                                 `authority` varchar(36) DEFAULT NULL,
+                                 `slug` varchar(100) DEFAULT NULL,
+                                 `active` tinyint(1) DEFAULT '0',
+                                 `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+                                 `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+                                 PRIMARY KEY (`id`),
+                                 UNIQUE KEY `ma_permission_authority_uindex` (`authority`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -124,9 +126,19 @@ CREATE TABLE `ma_permission` (
 --
 
 LOCK TABLES `ma_permission` WRITE;
-/*!40000 ALTER TABLE `ma_permission` DISABLE KEYS */;
-INSERT INTO `ma_permission` VALUES (1,'Admin','Can access to admin','cdf8ae23-f6ec-4339-b1a7-c4749e89263a','/admin/**',0,'2023-03-24 14:10:51','2023-03-29 13:41:41'),(2,'Admin root','Can access to dashboard','22e1151e-bc20-47d4-a120-e97cb13c5012','/admin',0,'2023-03-24 14:10:51','2023-03-29 17:53:46'),(3,'Dashboard','Can access to dashboard','22e1151e-bc20-4754-a120-e97cb13c5012','/admin/dashboard/**',0,'2023-03-24 14:10:51','2023-03-29 13:41:41'),(4,'Musics','Can access to music','25f348bc-6ab4-423a-a09e-1981263014a0','/admin/musics/**',0,'2023-03-24 14:10:51','2023-03-29 13:39:24');
-/*!40000 ALTER TABLE `ma_permission` ENABLE KEYS */;
+/*!40000 ALTER TABLE `ma_permission`
+    DISABLE KEYS */;
+INSERT INTO `ma_permission`
+VALUES (1, 'Admin', 'Can access all', 'cdf8ae23-f6ec-4339-b1a7-c4749e89263a', '/**', 0, '2023-03-24 14:10:51',
+        '2023-04-01 16:00:18'),
+       (2, 'Admin root', 'Can access to dashboard', '22e1151e-bc20-47d4-a120-e97cb13c5012', '/admin', 0,
+        '2023-03-24 14:10:51', '2023-03-29 18:21:06'),
+       (3, 'Dashboard', 'Can access to dashboard', '22e1151e-bc20-4754-a120-e97cb13c5012', '/admin/dashboard/**', 0,
+        '2023-03-24 14:10:51', '2023-03-29 13:41:41'),
+       (4, 'Musics', 'Can access to music', '25f348bc-6ab4-423a-a09e-1981263014a0', '/admin/musics/**', 0,
+        '2023-03-24 14:10:51', '2023-03-29 13:39:24');
+/*!40000 ALTER TABLE `ma_permission`
+    ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -134,7 +146,7 @@ UNLOCK TABLES;
 --
 
 DROP TABLE IF EXISTS `ma_playlist`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET @saved_cs_client = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ma_playlist` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -190,12 +202,16 @@ UNLOCK TABLES;
 DROP TABLE IF EXISTS `ma_role_permission`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `ma_role_permission` (
-  `role_id` int NOT NULL,
-  `permission_id` int NOT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`role_id`,`permission_id`)
+CREATE TABLE `ma_role_permission`
+(
+    `role_id`       int       NOT NULL,
+    `permission_id` int       NOT NULL,
+    `created_at`    timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at`    timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`role_id`, `permission_id`),
+    KEY `ma_role_permission_ma_permission_id_fk` (`permission_id`),
+    CONSTRAINT `ma_role_permission_ma_permission_id_fk` FOREIGN KEY (`permission_id`) REFERENCES `ma_permission` (`id`),
+    CONSTRAINT `ma_role_permission_ma_role_id_fk` FOREIGN KEY (`role_id`) REFERENCES `ma_role` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -312,4 +328,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-03-30  1:02:41
+-- Dump completed on 2023-04-01 23:43:44
