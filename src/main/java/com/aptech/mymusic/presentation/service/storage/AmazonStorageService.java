@@ -56,7 +56,7 @@ public class AmazonStorageService extends StorageService {
     public static String getUrl(@NotNull Resource.Path path, String name) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
-        calendar.add(Calendar.HOUR, 1);
+        calendar.add(Calendar.MILLISECOND, Resource.URL_EXP);
         return getAmazonS3()
                 .generatePresignedUrl(ResourceConfig.getInstance().getAwsBucketName(), keyOf(path, name), calendar.getTime())
                 .toString();

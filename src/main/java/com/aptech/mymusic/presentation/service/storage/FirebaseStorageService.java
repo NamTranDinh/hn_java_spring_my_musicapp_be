@@ -72,7 +72,7 @@ public class FirebaseStorageService extends StorageService {
         if ((blob = getStorage().get(blobOf(path, name))) == null) {
             return null;
         }
-        return blob.signUrl(1, TimeUnit.HOURS).toString();
+        return blob.signUrl(Resource.URL_EXP, TimeUnit.MILLISECONDS).toString();
     }
 
 

@@ -13,8 +13,12 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.concurrent.TimeUnit;
 
 public class Resource {
+
+    public static final int URL_EXP = (int) TimeUnit.DAYS.toMillis(30);
+
     public static String getUrl(Path path, String name) {
         return getUrl(ResourceConfig.SYSTEM_RESOURCE_TYPE, path, name);
     }
